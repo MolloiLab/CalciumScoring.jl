@@ -3,6 +3,10 @@ uuid = "9c0cb1da-21b1-4615-967b-153e03110a28"
 authors = ["Dale <djblack@uci.edu> and contributors"]
 version = "0.1.0"
 
+[deps]
+Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
+TestSetExtensions = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
+
 [compat]
 julia = "1"
 

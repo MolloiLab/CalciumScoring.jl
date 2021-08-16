@@ -1,5 +1,11 @@
 module CalciumScoring
 
-# Write your package code here.
+using Images
+
+include("./utils.jl")
+
+export
+# utils.jl functions
+mask_elements
 
 end

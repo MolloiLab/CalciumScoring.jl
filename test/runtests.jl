@@ -1,6 +1,2 @@
-using CalciumScoring
-using Test
-
-@testset "CalciumScoring.jl" begin
-    # Write your tests here.
-end
+include("imports.jl")
+include("utils.jl")

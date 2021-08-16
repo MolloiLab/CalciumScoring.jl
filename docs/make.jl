@@ -13,11 +13,7 @@ makedocs(;
         canonical="https://Dale-Black.github.io/CalciumScoring.jl",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-    ],
+    pages=["Home" => "index.md"],
 )
 
-deploydocs(;
-    repo="github.com/Dale-Black/CalciumScoring.jl",
-)
+deploydocs(; repo="github.com/Dale-Black/CalciumScoring.jl")
