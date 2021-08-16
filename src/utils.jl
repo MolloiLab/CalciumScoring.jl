@@ -1,5 +1,5 @@
 """
-	mask_elements(img, threshold, cutoff)
+	mask_elements(img, threshold, connectivity)
 Remove every element that is below the `threshold` and
 adjacent to more than the `connectivity` amount of other 
 elements similarly below the threshold. Returns a mask where 
