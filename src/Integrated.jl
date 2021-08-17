@@ -17,19 +17,18 @@ abstract type CalciumScore end
 angiography: a simulation study' [Molloi, Johnson, Ding, Lipinski] 
 (DOI: 10.1007/s10554-016-1007-9)
 """
-struct Integrated{T1 <: AbstractArray, T2 <: AbstractFloat} <: CalciumScore
+struct Integrated{T1<:AbstractArray,T2<:AbstractFloat} <: CalciumScore
     vol::T1
     I::T2
     N::T2
 end
 
 function Integrated(
-        vol::AbstractArray, 
-        I::AbstractFloat=Float64.(sum(vol)), 
-        N::AbstractFloat=Float64.(length(vol))
-        )
-
-    Integrated(I, N)
+    vol::AbstractArray,
+    I::AbstractFloat=Float64.(sum(vol)),
+    N::AbstractFloat=Float64.(length(vol)),
+)
+    return Integrated(I, N)
 end
 
 """
@@ -68,7 +67,7 @@ end
 function score(S_Bkg, S_Obj, size, algorithm::Integrated)
     I = algorithm.I
     N = algorithm.N
-    
+
     N_Obj = (I - (N * S_Bkg)) / (S_Obj - S_Bkg)
     Vol_Obj = N_Obj * size[1] * size[2] * size[3]
     return Vol_Obj
@@ -77,9 +76,9 @@ end
 function score(S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
     I = algorithm.I
     N = algorithm.N
-    
+
     N_Obj = (I - (N * S_Bkg)) / (S_Obj - S_Bkg)
     Vol_Obj = N_Obj * size[1] * size[2] * size[3]
     Mass_Obj = Vol_Obj * ρ
     return Mass_Obj
-end 
+end

@@ -6,7 +6,7 @@
             -1024 800 800 -1024
             -1024 -1024 -1024 -1024
         ]
-        vol = cat(v1, v1, dims=3)
+        vol = cat(v1, v1; dims=3)
         alg = Integrated(vol)
         S_Bkg = -1024
         S_Obj = 800
@@ -21,7 +21,7 @@
             -1024 800 800 -1024
             -1024 -1024 -1024 -1024
         ]
-        vol = cat(v1, v1, dims=3)
+        vol = cat(v1, v1; dims=3)
         alg = Integrated(vol)
         S_Bkg = -1024
         S_Obj = 800
@@ -37,7 +37,7 @@
             -1024 800 800 -1024
             -1024 -1024 -1024 -1024
         ]
-        vol = cat(v1, v1, dims=3)
+        vol = cat(v1, v1; dims=3)
         alg = Integrated(vol)
         S_Bkg = -1024
         S_Obj = 800
