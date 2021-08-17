@@ -2,10 +2,15 @@ module CalciumScoring
 
 using Images
 
+include("./Integrated.jl")
 include("./utils.jl")
 
 export
-# utils.jl functions
-mask_elements
+    # Integrated.jl functions
+    score,
+    Integrated,
+    
+    # utils.jl functions
+    mask_elements
 
 end
