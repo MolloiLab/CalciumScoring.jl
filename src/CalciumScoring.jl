@@ -6,8 +6,9 @@ include("./Integrated.jl")
 include("./utils.jl")
 
 export
-    # Integrated.jl functions
     score,
+
+    # Integrated.jl functions
     Integrated,
     
     # utils.jl functions
