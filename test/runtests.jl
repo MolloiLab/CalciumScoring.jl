@@ -1,3 +1,3 @@
 include("imports.jl")
-include("Integrated.jl")
+include("integrated.jl")
 include("utils.jl")
