@@ -1,6 +1,7 @@
 module CalciumScoring
 
 using Images
+using Statistics
 
 include("./agatston.jl")
 include("./integrated.jl")
