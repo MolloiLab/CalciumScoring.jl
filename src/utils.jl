@@ -84,7 +84,7 @@ function mass_calibration(
         (center[1] - mass_cal_center[2])^2 + (center[2] - mass_cal_center[2])^2
     )
     angle_0_200HA = acos(x_distance / angled_distance) * 180 / π
-    mask_0HU = create_circular_mask(
+    mask_0HU = Phantoms.create_circular_mask(
         cols, rows, mass_cal_center, Int(round(6.9 / spacing[1]))
     )
     masked_0HU = mask_0HU .* dcm_array[:, :, cal_rod_slice]
@@ -99,7 +99,7 @@ function mass_calibration(
     end
 
     std_0HU = sqrt(std_0HU / nonzero_count)
-    mask_200HU = create_circular_mask(
+    mask_200HU = Phantoms.create_circular_mask(
         cols, rows, (center[2], center[1]), Int(round(6.9 / spacing[1]))
     )
     masked_200HU = mask_200HU .* dcm_array[:, :, cal_rod_slice]
