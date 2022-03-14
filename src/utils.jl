@@ -53,7 +53,7 @@ function mass_calibration(
     elseif dist_y == 0
         mass_center_y = center[2]
         if center_LD[1] > center[1]
-            mass_center_x = round(center[1] - round(23 / spacing[1], RoundUp), RoundUo)
+            mass_center_x = round(center[1] - round(23 / spacing[1], RoundUp), RoundUp)
         else
             mass_center_x = round(center[0] + round(23 / spacing[1], RoundUp), RoundUp)
         end
