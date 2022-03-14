@@ -15,6 +15,7 @@ export score,
     Integrated,
 
     # utils.jl functions
-    mask_elements
+    mask_elements,
+    mass_calibration
 
 end
