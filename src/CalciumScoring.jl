@@ -3,7 +3,6 @@ module CalciumScoring
 using Images
 using Statistics
 using DICOMUtils
-using PhantomSegmentation
 
 include("./agatston.jl")
 include("./integrated.jl")
@@ -17,7 +16,6 @@ export score,
     Integrated,
 
     # utils.jl functions
-    mask_elements,
-    mass_calibration
+    mask_elements
 
 end
