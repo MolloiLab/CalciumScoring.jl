@@ -2,7 +2,6 @@ module CalciumScoring
 
 using Images
 using Statistics
-using DICOMUtils
 
 include("./agatston.jl")
 include("./integrated.jl")
