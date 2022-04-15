@@ -18,7 +18,7 @@ export score,
     Integrated,
 
     # spatially_weighted.jl functions
-    SpatiallyWeighted
+    SpatiallyWeighted,
 
     # utils.jl functions
     mask_elements
