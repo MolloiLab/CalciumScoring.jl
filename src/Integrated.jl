@@ -1,5 +1,3 @@
-abstract type CalciumScore end
-
 """
     function Integrated(
         vol, 

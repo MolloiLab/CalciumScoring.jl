@@ -1,17 +1,5 @@
 abstract type CalciumScore end
 
-# struct Agatston{T1<:AbstractArray,T2<:AbstractFloat} <: CalciumScore
-#     vol::T1
-#     spacing::T2
-# end
-
-# function Agatston(
-#     vol::AbstractArray,
-#     spacing::AbstractArray
-# )
-#     return Agatston(vol, spacing)
-# end
-
 struct Agatston <: CalciumScore end
 
 function score(vol, spacing, alg::Agatston; threshold=130, min_size_mm=1)
