@@ -14,8 +14,8 @@ function score(vol, spacing, alg::Agatston; threshold=130, min_size_mm=1)
         if max_intensity < threshold
             continue
         end
-        comp_connect = trues(min_size_pixels + 1, min_size_pixels + 1)
-        lesion_map = label_components(thresholded_slice, comp_connect)
+        comp_connect = Int(round(2 * floor(min_size_pixels/2) + 1))
+        lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
         num_non_zero = 0
         number_islands = 0
         slice_score = 0
@@ -60,8 +60,8 @@ function score(vol, spacing, mass_cal_factor, alg::Agatston; threshold=130, min_
         if max_intensity < threshold
             continue
         end
-        comp_connect = trues(min_size_pixels + 1, min_size_pixels + 1)
-        lesion_map = label_components(thresholded_slice, comp_connect)
+		comp_connect = Int(round(2 * floor(min_size_pixels/2) + 1))
+        lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
         num_non_zero = 0
         number_islands = 0
         mass_slice_score = 0
