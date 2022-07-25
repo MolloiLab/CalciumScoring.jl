@@ -1,5 +1,7 @@
 # CalciumScoring
 
+[![DOI](https://zenodo.org/badge/396541511.svg)](https://zenodo.org/badge/latestdoi/396541511)
+
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://Dale-Black.github.io/CalciumScoring.jl/stable)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://Dale-Black.github.io/CalciumScoring.jl/dev)
 [![Build Status](https://travis-ci.com/Dale-Black/CalciumScoring.jl.svg?branch=master)](https://travis-ci.com/Dale-Black/CalciumScoring.jl)
