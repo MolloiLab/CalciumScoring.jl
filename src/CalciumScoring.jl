@@ -12,7 +12,7 @@ include("./utils.jl")
 
 export score,
     # agatston.jl functions
-    Agatston,
+    CalciumScore, Agatston,
 
     # integrated.jl functions
     Integrated,
