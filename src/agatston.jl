@@ -77,9 +77,8 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
 	end
     area_mm = spacing[1] * spacing[2]
     min_size_pixels = Int(round(min_size_mm / area_mm))
-    num_slices = size(vol, 3)
     score = 0
-    for z in range(1, num_slices)
+    for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
         max_intensity = maximum(slice)
@@ -87,6 +86,9 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
             continue
         end
         comp_connect = Int(round(2 * floor(min_size_pixels/2) + 1))
+        if comp_connect > 3
+			comp_connect = 3
+		end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
         num_non_zero = 0
         number_islands = 0
@@ -151,7 +153,7 @@ function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm
     min_size_pixels = Int(round(min_size_mm / area_mm))
     mass_score = 0
     score = 0
-    for z in 1:size(vol, 3)
+    for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
         max_intensity = maximum(slice)
@@ -159,6 +161,9 @@ function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm
             continue
         end
 		comp_connect = Int(round(2 * floor(min_size_pixels/2) + 1))
+        if comp_connect > 3
+			comp_connect = 3
+		end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
         num_non_zero = 0
         number_islands = 0
