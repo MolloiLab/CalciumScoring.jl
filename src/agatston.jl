@@ -7,11 +7,11 @@ using InteractiveUtils
 # ╔═╡ 5169922e-50ae-11ed-2236-2f56e5a20360
 # ╠═╡ show_logs = false
 begin
-	using Pkg
-	Pkg.activate("..")
-	using Revise
-	using PlutoUI
-	using CalciumScoring
+    using Pkg
+    Pkg.activate("..")
+    using Revise
+    using PlutoUI
+    using CalciumScoring
 end
 
 # ╔═╡ c73efe8b-e72b-48a8-a966-5192d9c99abb
@@ -56,25 +56,25 @@ md"""
 function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
 ```
 
-Given an input `vol` and known pixel/vovel `spacing`, calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T)
+Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T)
 
 Energy (`kV`) specific `threshold`s are determined based on previous [publications](https://doi.org/10.1093/ehjci/jey019)
 
 Returns the Agatston score
 """
 function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
-	local threshold
-	if kV == 80
-		threshold = 177
-	elseif kV == 100
-		threshold = 145
-	elseif kV == 120
-		threshold = 130
-	elseif kV == 135
-		threshold = 110
-	else
-		threshold = 130
-	end
+    local threshold
+    if kV == 80
+        threshold = 177
+    elseif kV == 100
+        threshold = 145
+    elseif kV == 120
+        threshold = 130
+    elseif kV == 135
+        threshold = 112
+    else
+        threshold = Int(round(378 * exp(-0.009 * kV)))
+    end
     area_mm = spacing[1] * spacing[2]
     min_size_pixels = Int(round(min_size_mm / area_mm))
     score = 0
@@ -85,10 +85,10 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
         if max_intensity < threshold
             continue
         end
-        comp_connect = Int(round(2 * floor(min_size_pixels/2) + 1))
+        comp_connect = Int(round(2 * floor(min_size_pixels / 2) + 1))
         if comp_connect > 3
-			comp_connect = 3
-		end
+            comp_connect = 3
+        end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
         num_non_zero = 0
         number_islands = 0
@@ -127,7 +127,7 @@ end
 function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
 ```
 
-Given an input `vol`, known pixel/vovel `spacing`, and a mass calibration factor (`mass_cal_factor`) calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T). 
+Given an input `vol`, known pixel/voxel `spacing`, and a mass calibration factor (`mass_cal_factor`) calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T). 
 
 Energy (`kV`) specific `threshold`s are determined based on previous [publications](https://doi.org/10.1093/ehjci/jey019)
 
@@ -136,18 +136,18 @@ Also, converts the Agatston score to a calcium mass score via the `mass_cal_fact
 Returns the Agatston score and the calcium mass score
 """
 function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
-	local threshold
-	if kV == 80
-		threshold = 177
-	elseif kV == 100
-		threshold = 145
-	elseif kV == 120
-		threshold = 130
-	elseif kV == 135
-		threshold = 110
-	else
-		threshold = 130
-	end
+    local threshold
+    if kV == 80
+        threshold = 177
+    elseif kV == 100
+        threshold = 145
+    elseif kV == 120
+        threshold = 130
+    elseif kV == 135
+        threshold = 112
+    else
+        threshold = Int(round(378 * exp(-0.009 * kV)))
+    end
     area_mm = spacing[1] * spacing[2]
     slice_thickness = spacing[3]
     min_size_pixels = Int(round(min_size_mm / area_mm))
@@ -160,17 +160,17 @@ function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm
         if max_intensity < threshold
             continue
         end
-		comp_connect = Int(round(2 * floor(min_size_pixels/2) + 1))
+        comp_connect = Int(round(2 * floor(min_size_pixels / 2) + 1))
         if comp_connect > 3
-			comp_connect = 3
-		end
+            comp_connect = 3
+        end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
         num_non_zero = 0
         number_islands = 0
         mass_slice_score = 0
         slice_score = 0
         num_labels = length(unique(lesion_map))
-        for label_idx in 1:(num_labels - 1)
+        for label_idx in 1:(num_labels-1)
             idxs = findall(x -> x == label_idx, lesion_map)
             num_label_idxs = length(idxs)
             if num_label_idxs < min_size_pixels
