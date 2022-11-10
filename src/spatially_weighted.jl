@@ -7,11 +7,11 @@ using InteractiveUtils
 # ╔═╡ 4d280a50-7a5e-4267-a22e-a372c49658e7
 # ╠═╡ show_logs = false
 begin
-	using Pkg
-	Pkg.activate("..")
-	using Revise
-	using PlutoUI
-	using CalciumScoring
+    using Pkg
+    Pkg.activate("..")
+    using Revise
+    using PlutoUI
+    using CalciumScoring
 end
 
 # ╔═╡ 10173bb4-94dc-49db-b5f9-8206dbfb64ae
@@ -43,20 +43,20 @@ Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting e
 []
 """
 function score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
-    μ, σ= mean(calibration), std(calibration)
-	d = Distributions.Normal(μ, σ)
+    μ, σ = mean(calibration), std(calibration)
+    d = Distributions.Normal(μ, σ)
 
-	scaled_array = zeros(size(vol))
-	for i in 1:size(vol, 1)
-		for j in 1:size(vol, 2)
-			scaled_array[i, j] = Distributions.cdf(d, vol[i, j])
-		end
-	end
+    scaled_array = zeros(size(vol))
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            scaled_array[i, j] = Distributions.cdf(d, vol[i, j])
+        end
+    end
 
-	kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-	weighted_arr = DSP.conv(scaled_array, kern)[2:end-1, 2:end-1]
-    
-	return sum(weighted_arr)
+    kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
+    weighted_arr = DSP.conv(scaled_array, kern)[2:end-1, 2:end-1]
+
+    return sum(weighted_arr)
 end
 
 # ╔═╡ 7d24eba9-9d15-4fcf-90a8-c874e3b2ac35
@@ -71,19 +71,19 @@ Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting e
 []
 """
 function score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
-	d = Distributions.Normal(μ, σ)
+    d = Distributions.Normal(μ, σ)
 
-	scaled_array = zeros(size(vol))
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			scaled_array[i, j] = Distributions.cdf(d, vol[i, j])
-		end
-	end
+    scaled_array = zeros(size(vol))
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            scaled_array[i, j] = Distributions.cdf(d, vol[i, j])
+        end
+    end
 
-	kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-	weighted_arr = DSP.conv(scaled_array, kern)[2:end-1, 2:end-1]
-    
-	return sum(weighted_arr)
+    kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
+    weighted_arr = DSP.conv(scaled_array, kern)[2:end-1, 2:end-1]
+
+    return sum(weighted_arr)
 end
 
 # ╔═╡ 73b7951a-7fa1-493a-a741-312d8c734496
@@ -99,24 +99,24 @@ Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting e
 """
 function score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
     μ, σ = mean(calibration), std(calibration)
-	d = Distributions.Normal(μ, σ)
+    d = Distributions.Normal(μ, σ)
 
-	scaled_array = zeros(size(vol))
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			for z in axes(vol, 3)
-				scaled_array[i, j, z] = Distributions.cdf(d, vol[i, j, z])
-			end
-		end
-	end
+    scaled_array = zeros(size(vol))
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            for z in axes(vol, 3)
+                scaled_array[i, j, z] = Distributions.cdf(d, vol[i, j, z])
+            end
+        end
+    end
 
-	weighted_arr = zeros(size(vol))
-	for z in 1:size(scaled_array, 3)
-		kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-		weighted_arr[:, :, z] = DSP.conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
-	end
-    
-	return sum(weighted_arr)
+    weighted_arr = zeros(size(vol))
+    for z in axes(scaled_array, 3)
+        kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
+        weighted_arr[:, :, z] = DSP.conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
+    end
+
+    return sum(weighted_arr)
 end
 
 # ╔═╡ 65d6d5b5-e73c-4d11-81be-890f02f9740e
@@ -131,24 +131,24 @@ Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting e
 []
 """
 function score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
-	d = Distributions.Normal(μ, σ)
+    d = Distributions.Normal(μ, σ)
 
-	scaled_array = zeros(size(vol))
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			for z in axes(vol, 3)
-				scaled_array[i, j, z] = Distributions.cdf(d, vol[i, j, z])
-			end
-		end
-	end
+    scaled_array = zeros(size(vol))
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            for z in axes(vol, 3)
+                scaled_array[i, j, z] = Distributions.cdf(d, vol[i, j, z])
+            end
+        end
+    end
 
-	weighted_arr = zeros(size(vol))
-	for z in 1:size(scaled_array, 3)
-		kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-		weighted_arr[:, :, z] = DSP.conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
-	end
-    
-	return sum(weighted_arr)
+    weighted_arr = zeros(size(vol))
+    for z in axes(scaled_array, 3)
+        kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
+        weighted_arr[:, :, z] = DSP.conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
+    end
+
+    return sum(weighted_arr)
 end
 
 # ╔═╡ Cell order:
