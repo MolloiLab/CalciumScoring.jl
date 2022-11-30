@@ -13,8 +13,6 @@ begin
     using PlutoUI
     using CalciumScoring
 	using CairoMakie
-	using Noise
-	using ImageFiltering
 end
 
 # ╔═╡ a69f6bf2-c37b-481f-ae3e-6893cf7c7b5b
