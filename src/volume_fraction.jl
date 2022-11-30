@@ -12,7 +12,6 @@ begin
     using Revise
     using PlutoUI
     using CalciumScoring
-	using CairoMakie
 end
 
 # ╔═╡ a69f6bf2-c37b-481f-ae3e-6893cf7c7b5b
@@ -41,7 +40,7 @@ _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
 Find the percentage of calcium within one voxel given the voxel intensity `voxel_intensity`, the Hounsfield unit associated with a known calcium density `hu_calcium`, and the Hounsfield unit associated with background heart tissue `hu_heart_tissue`
 """
 function _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
-	return precentage_calcium = (voxel_intensity - hu_heart_tissue) / (hu_calcium - hu_heart_tissue)
+    return precentage_calcium = (voxel_intensity - hu_heart_tissue) / (hu_calcium - hu_heart_tissue)
 end
 
 # ╔═╡ 7afe5a72-abeb-41c0-9226-fea57ee7d23a
@@ -58,15 +57,15 @@ score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
 Given an input region of interest containing all potential calcium `vol`, the Hounsfield unit associated with a known calcium density `hu_calcium`, the Hounsfield unit associated with background heart tissue `hu_heart_tissue`, calculate the number of voxels that are calcified
 """
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-	number_calcium_voxels = []
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			m = vol[i, j]
-			percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-			push!(number_calcium_voxels, percent)
-		end
-	end
-	return sum(number_calcium_voxels)
+    number_calcium_voxels = []
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            m = vol[i, j]
+            percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
+            push!(number_calcium_voxels, percent)
+        end
+    end
+    return sum(number_calcium_voxels)
 end
 
 # ╔═╡ bb65a2fd-577b-42f3-91bd-f20140c4c5d6
@@ -78,15 +77,15 @@ score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeF
 Given an input region of interest containing all potential calcium `vol`, the Hounsfield unit associated with a known calcium density `hu_calcium`, the Hounsfield unit associated with background heart tissue `hu_heart_tissue`, and the size of an individual pixel/voxel `voxel_size`, calculate the volume of the calcification
 """
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-	number_calcium_voxels = []
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			m = vol[i, j]
-			percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-			push!(number_calcium_voxels, percent)
-		end
-	end
-	return sum(number_calcium_voxels) * voxel_size * density_calcium
+    number_calcium_voxels = []
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            m = vol[i, j]
+            percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
+            push!(number_calcium_voxels, percent)
+        end
+    end
+    return sum(number_calcium_voxels) * voxel_size * density_calcium
 end
 
 # ╔═╡ 35516ea1-527c-4338-9aa0-bfff0ae214ed
@@ -98,15 +97,15 @@ score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calc
 Given an input region of interest containing all potential calcium `vol`, the Hounsfield unit associated with a known calcium density `hu_calcium`, the Hounsfield unit associated with background heart tissue `hu_heart_tissue`, the size of an individual pixel/voxel `voxel_size`, and the density of the previously mentioned calcium `density_calcium`, calculate the mass of the calcification
 """
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
-	number_calcium_voxels = []
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			m = vol[i, j]
-			percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-			push!(number_calcium_voxels, percent)
-		end
-	end
-	return sum(number_calcium_voxels) * voxel_size * density_calcium
+    number_calcium_voxels = []
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            m = vol[i, j]
+            percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
+            push!(number_calcium_voxels, percent)
+        end
+    end
+    return sum(number_calcium_voxels) * voxel_size * density_calcium
 end
 
 # ╔═╡ ad34b8f1-1f3b-4e0f-ad15-3a6ddd4d2c97
@@ -123,17 +122,17 @@ score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
 Given an input region of interest containing all potential calcium `vol`, the Hounsfield unit associated with a known calcium density `hu_calcium`, the Hounsfield unit associated with background heart tissue `hu_heart_tissue`, calculate the number of voxels that are calcified
 """
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-	number_calcium_voxels = []
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			for k in axes(vol, 3)
-				m = vol[i, j, k]
-				percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-				push!(number_calcium_voxels, percent)
-			end
-		end
-	end
-	return sum(number_calcium_voxels)
+    number_calcium_voxels = []
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            for k in axes(vol, 3)
+                m = vol[i, j, k]
+                percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
+                push!(number_calcium_voxels, percent)
+            end
+        end
+    end
+    return sum(number_calcium_voxels)
 end
 
 # ╔═╡ 02bef673-e982-41f9-8781-0b11fb9477ac
@@ -145,17 +144,17 @@ score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calc
 Given an input region of interest containing all potential calcium `vol`, the Hounsfield unit associated with a known calcium density `hu_calcium`, the Hounsfield unit associated with background heart tissue `hu_heart_tissue`, and the size of an individual pixel/voxel `voxel_size`, calculate the volume of the calcification
 """
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-	number_calcium_voxels = []
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			for k in axes(vol, 3)
-				m = vol[i, j, k]
-				percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-				push!(number_calcium_voxels, percent)
-			end
-		end
-	end
-	return sum(number_calcium_voxels) * voxel_size * density_calcium
+    number_calcium_voxels = []
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            for k in axes(vol, 3)
+                m = vol[i, j, k]
+                percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
+                push!(number_calcium_voxels, percent)
+            end
+        end
+    end
+    return sum(number_calcium_voxels) * voxel_size * density_calcium
 end
 
 # ╔═╡ 48f4660c-b6b9-402b-b6e1-a0207f1dc468
@@ -167,17 +166,17 @@ score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calc
 Given an input region of interest containing all potential calcium `vol`, the Hounsfield unit associated with a known calcium density `hu_calcium`, the Hounsfield unit associated with background heart tissue `hu_heart_tissue`, the size of an individual pixel/voxel `voxel_size`, and the density of the previously mentioned calcium `density_calcium`, calculate the mass of the calcification
 """
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
-	number_calcium_voxels = []
-	for i in axes(vol, 1)
-		for j in axes(vol, 2)
-			for k in axes(vol, 3)
-				m = vol[i, j, k]
-				percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-				push!(number_calcium_voxels, percent)
-			end
-		end
-	end
-	return sum(number_calcium_voxels) * voxel_size * density_calcium
+    number_calcium_voxels = []
+    for i in axes(vol, 1)
+        for j in axes(vol, 2)
+            for k in axes(vol, 3)
+                m = vol[i, j, k]
+                percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
+                push!(number_calcium_voxels, percent)
+            end
+        end
+    end
+    return sum(number_calcium_voxels) * voxel_size * density_calcium
 end
 
 # ╔═╡ Cell order:
