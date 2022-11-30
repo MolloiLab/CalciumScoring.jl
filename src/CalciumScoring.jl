@@ -9,6 +9,7 @@ include("./agatston.jl")
 include("./integrated.jl")
 include("./spatially_weighted.jl")
 include("./utils.jl")
+include("./volume_fraction.jl")
 
 export score,
     # agatston.jl functions
@@ -21,6 +22,9 @@ export score,
     SpatiallyWeighted,
 
     # utils.jl functions
-    mask_elements
+    mask_elements,
+
+    # volume_fraction.jl
+    VolumeFraction
 
 end
