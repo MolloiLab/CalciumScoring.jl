@@ -7,6 +7,7 @@ using DSP
 
 include("./agatston.jl")
 include("./integrated.jl")
+include("./material_decomposition.jl")
 include("./spatially_weighted.jl")
 include("./utils.jl")
 include("./volume_fraction.jl")
@@ -17,6 +18,10 @@ export score,
 
     # integrated.jl functions
     Integrated,
+
+    # material_decomposition functions,
+    MaterialDecomposition,
+    fit_calibration,
 
     # spatially_weighted.jl functions
     SpatiallyWeighted,

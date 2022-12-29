@@ -183,8 +183,8 @@ end
 # ╠═3b4c5908-7035-11ed-21ef-f1b5cdb49f4f
 # ╠═a69f6bf2-c37b-481f-ae3e-6893cf7c7b5b
 # ╟─8987307f-2021-4f2a-aa64-81059a46eca7
-# ╟─2a78760b-7546-4acd-a7f4-9a0e3bb451a8
-# ╟─fc7679be-c412-47e3-8c3f-b6a36321f0ed
+# ╠═2a78760b-7546-4acd-a7f4-9a0e3bb451a8
+# ╠═fc7679be-c412-47e3-8c3f-b6a36321f0ed
 # ╟─7afe5a72-abeb-41c0-9226-fea57ee7d23a
 # ╠═e7118615-2c84-4d2b-b0de-6aa3e1d756cb
 # ╠═bb65a2fd-577b-42f3-91bd-f20140c4c5d6
