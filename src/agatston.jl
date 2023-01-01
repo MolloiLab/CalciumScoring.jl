@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.13
+# v0.19.18
 
 using Markdown
 using InteractiveUtils
@@ -11,6 +11,7 @@ begin
     Pkg.activate("..")
     using Revise
     using PlutoUI
+	using Images
     using CalciumScoring
 end
 
@@ -63,21 +64,11 @@ Energy (`kV`) specific `threshold`s are determined based on previous [publicatio
 Returns the Agatston score
 """
 function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
-    local threshold
-    if kV == 80
-        threshold = 177
-    elseif kV == 100
-        threshold = 145
-    elseif kV == 120
-        threshold = 130
-    elseif kV == 135
-        threshold = 112
-    else
-        threshold = Int(round(378 * exp(-0.009 * kV)))
-    end
+    threshold = round(378 * exp(-0.009 * kV))
     area_mm = spacing[1] * spacing[2]
-    min_size_pixels = Int(round(min_size_mm / area_mm))
-    score = 0
+    min_size_pixels = div(round(min_size_mm / area_mm), 1)
+    comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
+    total_score = 0
     for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
@@ -85,40 +76,22 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
         if max_intensity < threshold
             continue
         end
-        comp_connect = Int(round(2 * floor(min_size_pixels / 2) + 1))
-        if comp_connect > 3
-            comp_connect = 3
-        end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
-        num_non_zero = 0
-        number_islands = 0
-        slice_score = 0
         num_labels = length(unique(lesion_map))
-        for label_idx in 0:num_labels
-            if label_idx == 0
-                continue
-            end
-
-            idxs = findall(x -> x == label_idx, lesion_map)
-            num_label_idxs = length(idxs)
+        for label_idx in 1:num_labels
+            idxs = lesion_map .== label_idx
+            num_label_idxs = sum(idxs)
             if num_label_idxs < min_size_pixels
                 continue
             end
-
             intensities = slice[idxs]
             max_intensity = maximum(intensities)
-            weight = floor(max_intensity / 100)
-            if weight > 4
-                weight = 4.0
-            end
-            num_non_zero_in_island = num_label_idxs
-            slice_score += num_non_zero_in_island * area_mm * weight
-            num_non_zero += num_non_zero_in_island
-            number_islands += 1
+            weight = div(max_intensity, 100)
+            slice_score = num_label_idxs * area_mm * min(weight, 4)
+            total_score += slice_score
         end
-        score += slice_score
     end
-    return score
+    return total_score
 end
 
 # ╔═╡ fd4ed9d8-c11a-4956-b531-80718047ec90
@@ -136,21 +109,10 @@ Also, converts the Agatston score to a calcium mass score via the `mass_cal_fact
 Returns the Agatston score and the calcium mass score
 """
 function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
-    local threshold
-    if kV == 80
-        threshold = 177
-    elseif kV == 100
-        threshold = 145
-    elseif kV == 120
-        threshold = 130
-    elseif kV == 135
-        threshold = 112
-    else
-        threshold = Int(round(378 * exp(-0.009 * kV)))
-    end
+    threshold = round(378 * exp(-0.009 * kV))
     area_mm = spacing[1] * spacing[2]
-    slice_thickness = spacing[3]
-    min_size_pixels = Int(round(min_size_mm / area_mm))
+    min_size_pixels = div(round(min_size_mm / area_mm), 1)
+	comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
     mass_score = 0
     score = 0
     for z in axes(vol, 3)
@@ -159,10 +121,6 @@ function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm
         max_intensity = maximum(slice)
         if max_intensity < threshold
             continue
-        end
-        comp_connect = Int(round(2 * floor(min_size_pixels / 2) + 1))
-        if comp_connect > 3
-            comp_connect = 3
         end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
         num_non_zero = 0
@@ -194,7 +152,6 @@ function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm
         mass_score += mass_slice_score * plaque_vol * mass_cal_factor
         score += slice_score
     end
-    return score, mass_score
 end
 
 # ╔═╡ Cell order:
