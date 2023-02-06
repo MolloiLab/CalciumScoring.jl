@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.18
+# v0.19.22
 
 using Markdown
 using InteractiveUtils
@@ -9,10 +9,7 @@ using InteractiveUtils
 begin
     using Pkg
     Pkg.activate("..")
-    using Revise
-    using PlutoUI
-	using Images
-    using CalciumScoring
+    using Revise, PlutoUI, Images, CalciumScoring, Statistics
 end
 
 # ╔═╡ c73efe8b-e72b-48a8-a966-5192d9c99abb
@@ -54,14 +51,41 @@ md"""
 # ╔═╡ ee2a227e-79cf-445a-8c87-45f2738101c2
 """
 ```julia
-function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
+score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
 ```
 
-Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T)
+Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T). Energy (`kV`) specific `threshold`s are determined based on previous [publications](https://doi.org/10.1093/ehjci/jey019).
 
-Energy (`kV`) specific `threshold`s are determined based on previous [publications](https://doi.org/10.1093/ehjci/jey019)
+#### Inputs
+- `vol`: input volume containing just the 
+- `spacing`: known pixel/voxel spacing
+- `alg::Agatston`: Agatston scoring algorithm `Agatston()`
+- kwargs:
+  - `kV=120`: energy of the input CT scan image
+  - `min_size_mm=1`: minimum connected component size (see [`label_components`](https://github.com/JuliaImages/Images.jl))
 
-Returns the Agatston score
+#### Returns
+- `total_score`: total Agatston score
+---
+
+```julia
+score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
+```
+
+Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T). Energy (`kV`) specific `threshold`s are determined based on previous [publications](https://doi.org/10.1093/ehjci/jey019). Also, it converts the Agatston score to a calcium mass score via the `mass_cal_factor`
+
+#### Inputs
+- `vol`: input volume containing just the 
+- `spacing`: known pixel/voxel spacing
+- `mass_cal_factor`: water rod measurement used for converting Agatston score to mass
+- `alg::Agatston`: Agatston scoring algorithm `Agatston()`
+- kwargs:
+  - `kV=120`: energy of the input CT scan image
+  - `min_size_mm=1`: minimum connected component size (see [`label_components`](https://github.com/JuliaImages/Images.jl))
+
+#### Returns
+- `total_score`: total Agatston score
+- `mass_score`: total calcium mass via Agatston scoring
 """
 function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
     threshold = round(378 * exp(-0.009 * kV))
@@ -95,26 +119,14 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
 end
 
 # ╔═╡ fd4ed9d8-c11a-4956-b531-80718047ec90
-"""
-```julia
-function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
-```
-
-Given an input `vol`, known pixel/voxel `spacing`, and a mass calibration factor (`mass_cal_factor`) calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T). 
-
-Energy (`kV`) specific `threshold`s are determined based on previous [publications](https://doi.org/10.1093/ehjci/jey019)
-
-Also, converts the Agatston score to a calcium mass score via the `mass_cal_factor`
-
-Returns the Agatston score and the calcium mass score
-"""
 function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
     threshold = round(378 * exp(-0.009 * kV))
     area_mm = spacing[1] * spacing[2]
+	slice_thickness = spacing[3]
     min_size_pixels = div(round(min_size_mm / area_mm), 1)
 	comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
     mass_score = 0
-    score = 0
+    total_score = 0
     for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
@@ -150,8 +162,9 @@ function score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm
         plaque_vol = length(findall(x -> x != 0, lesion_map))
         plaque_vol = plaque_vol * area_mm * slice_thickness
         mass_score += mass_slice_score * plaque_vol * mass_cal_factor
-        score += slice_score
+        total_score += slice_score
     end
+	return total_score, mass_score
 end
 
 # ╔═╡ Cell order:
