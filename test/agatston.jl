@@ -16,6 +16,17 @@ begin
 	using Unitful: mm, mg
 end
 
+# ╔═╡ 01cb8e86-5072-42b6-b262-2412e3192ed4
+@testset "Agatston" begin
+    v1 = ones((4, 2, 2))
+    v2 = zeros((4, 2, 2))
+    vol = hcat(v1, v2) * 400
+    spacing = [0.5, 0.5, 0.5]mm
+    alg = Agatston()
+    agatston_score, volume_score = score(vol, spacing, alg)
+    @test agatston_score ≈ 16 && volume_score == 2
+end
+
 # ╔═╡ 6788b122-50b1-11ed-3603-c30ea99a0af2
 @testset "Agatston Mass" begin
     v1 = ones((4, 2, 2))
@@ -30,4 +41,5 @@ end
 
 # ╔═╡ Cell order:
 # ╠═f914d5dc-9d93-49df-b05d-2a752ef8bc60
+# ╠═01cb8e86-5072-42b6-b262-2412e3192ed4
 # ╠═6788b122-50b1-11ed-3603-c30ea99a0af2
