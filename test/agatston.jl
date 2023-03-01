@@ -13,7 +13,7 @@ begin
     using PlutoUI
     using Test
     using CalciumScoring
-	using Unitful: mm, mg
+    using Unitful: mm, mg
 end
 
 # ╔═╡ 01cb8e86-5072-42b6-b262-2412e3192ed4
@@ -24,7 +24,7 @@ end
     spacing = [0.5, 0.5, 0.5]mm
     alg = Agatston()
     agatston_score, volume_score = score(vol, spacing, alg)
-    @test agatston_score ≈ 16 && volume_score == 2
+    @test agatston_score ≈ 16 && volume_score == 2mm^3
 end
 
 # ╔═╡ 6788b122-50b1-11ed-3603-c30ea99a0af2
@@ -34,7 +34,7 @@ end
     vol = hcat(v1, v2) * 400
     spacing = [0.5, 0.5, 0.5]mm
     alg = Agatston()
-    mass_cal_factor = 0.00075mg/mm^3
+    mass_cal_factor = 0.00075mg / mm^3
     agatston_score, volume_score, mass_score = score(vol, spacing, mass_cal_factor, alg)
     @test agatston_score ≈ 16 && mass_score ≈ 0.6mg
 end

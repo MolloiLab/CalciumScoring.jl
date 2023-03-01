@@ -10,7 +10,7 @@ begin
     using Pkg
     Pkg.activate("..")
     using Revise, PlutoUI, Images, CalciumScoring, Statistics
-	using Unitful: mm, mg, ustrip
+    using Unitful: mm, mg, ustrip
 end
 
 # ╔═╡ c73efe8b-e72b-48a8-a966-5192d9c99abb
@@ -65,13 +65,13 @@ Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium scor
 - `volume_score`: total calcium volume via Agatston scoring
 """
 function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
-	spacing = ustrip(spacing)
+    spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
     min_size_pixels = div(round(min_size / area), 1)
     comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
     agatston_score = 0
-	volume_score = 0
+    volume_score = 0mm^3
     for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
@@ -92,7 +92,7 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
             weight = div(max_intensity, 100)
             slice_score = num_label_idxs * area * min(weight, 4)
             agatston_score += slice_score
-			volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3]
+            volume_score += num_label_idxs * spacing[1]mm * spacing[2]mm * spacing[3]mm
         end
     end
     return agatston_score, volume_score
@@ -126,14 +126,14 @@ Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium scor
 - `mass_score`: total calcium mass via Agatston scoring
 """
 function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
-	spacing = ustrip(spacing)
+    spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
     min_size_pixels = div(round(min_size / area), 1)
     comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
     agatston_score = 0
-	volume_score = 0
-	attenuations = []
+    volume_score = 0mm^3
+    attenuations = []
     for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
@@ -154,12 +154,12 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
             weight = div(max_intensity, 100)
             slice_score = num_label_idxs * area * min(weight, 4)
             agatston_score += slice_score
-			volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3] 
-			push!(attenuations, intensities...)
+            volume_score += num_label_idxs * spacing[1]mm * spacing[2]mm * spacing[3]mm
+            push!(attenuations, intensities...)
         end
     end
-	rel_mass_score = mean(attenuations) * (volume_score)mm^3
-	abs_mass_score = rel_mass_score * mass_calibration_factor
+    rel_mass_score = mean(attenuations) * volume_score
+    abs_mass_score = rel_mass_score * mass_calibration_factor
     return agatston_score, volume_score, abs_mass_score
 end
 
