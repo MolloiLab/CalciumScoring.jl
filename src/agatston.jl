@@ -217,7 +217,7 @@ Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium scor
 - `volume_score`: total calcium volume via Agatston scoring
 - `mass_score`: total calcium mass via Agatston scoring
 """
-function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
+function score_test(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
 	@assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
@@ -250,7 +250,12 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
             push!(attenuations, intensities...)
         end
     end
-    rel_mass_score = mean(attenuations) * volume_score
+	local rel_mass_score
+	if length(attenuations) == 0
+		rel_mass_score = 0
+	else
+		rel_mass_score = mean(attenuations) * volume_score
+	end
     abs_mass_score = rel_mass_score * mass_calibration_factor
     return agatston_score, volume_score, abs_mass_score
 end
