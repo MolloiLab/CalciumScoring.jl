@@ -50,71 +50,71 @@ The function returns the weight threshold as an integer value between 0 and 4.
 - [Gräni, Christoph et al. “Ultra-Low-Dose Coronary Artery Calcium Scoring Using Novel Scoring Thresholds for Low Tube Voltage Protocols—a Pilot Study.” European heart journal cardiovascular imaging 19.12 (2018): 1362–1371. Web.](https://doi.org/10.1093/ehjci/jey019)
 """
 function _weight_thresholds(kV, max_intensity)
-	@assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be either 70, 80, 100, 120 or 135"
+    @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be either 70, 80, 100, 120 or 135"
 
-	local weight
-	if kV == 70
-		if max_intensity < 207
-			weight = 0
-		elseif max_intensity < 318
-			weight = 1
-		elseif max_intensity < 477
-			weight = 2
-		elseif max_intensity < 636
-			weight = 3
-		elseif max_intensity >= 636
-			weight = 4
-		end
-	elseif kV == 80
-		if max_intensity < 177
-			weight = 0
-		elseif max_intensity < 271
-			weight = 1
-		elseif max_intensity < 408
-			weight = 2
-		elseif max_intensity < 544
-			weight = 3
-		elseif max_intensity >= 544
-			weight = 4
-		end
-	elseif kV == 100
-		if max_intensity < 145
-			weight = 0
-		elseif max_intensity < 222
-			weight = 1
-		elseif max_intensity < 334
-			weight = 2
-		elseif max_intensity < 446
-			weight = 3
-		elseif max_intensity >= 446
-			weight = 4
-		end
-	elseif kV == 120
-		if max_intensity < 130
-			weight = 0
-		elseif max_intensity < 199
-			weight = 1
-		elseif max_intensity < 299
-			weight = 2
-		elseif max_intensity < 399
-			weight = 3
-		elseif max_intensity >= 399
-			weight = 4
-		end
-	elseif kV == 135
-		if max_intensity < 119
-			weight = 0
-		elseif max_intensity < 183
-			weight = 1
-		elseif max_intensity < 274
-			weight = 2
-		elseif max_intensity < 364
-			weight = 3
-		elseif max_intensity >= 364
-			weight = 4
-		end
-	end
-	return weight
+    local weight
+    if kV == 70
+        if max_intensity < 207
+            weight = 0
+        elseif max_intensity < 318
+            weight = 1
+        elseif max_intensity < 477
+            weight = 2
+        elseif max_intensity < 636
+            weight = 3
+        elseif max_intensity >= 636
+            weight = 4
+        end
+    elseif kV == 80
+        if max_intensity < 177
+            weight = 0
+        elseif max_intensity < 271
+            weight = 1
+        elseif max_intensity < 408
+            weight = 2
+        elseif max_intensity < 544
+            weight = 3
+        elseif max_intensity >= 544
+            weight = 4
+        end
+    elseif kV == 100
+        if max_intensity < 145
+            weight = 0
+        elseif max_intensity < 222
+            weight = 1
+        elseif max_intensity < 334
+            weight = 2
+        elseif max_intensity < 446
+            weight = 3
+        elseif max_intensity >= 446
+            weight = 4
+        end
+    elseif kV == 120
+        if max_intensity < 130
+            weight = 0
+        elseif max_intensity < 199
+            weight = 1
+        elseif max_intensity < 299
+            weight = 2
+        elseif max_intensity < 399
+            weight = 3
+        elseif max_intensity >= 399
+            weight = 4
+        end
+    elseif kV == 135
+        if max_intensity < 119
+            weight = 0
+        elseif max_intensity < 183
+            weight = 1
+        elseif max_intensity < 274
+            weight = 2
+        elseif max_intensity < 364
+            weight = 3
+        elseif max_intensity >= 364
+            weight = 4
+        end
+    end
+    return weight
 end
 
 # ╔═╡ 8a560744-3870-4f92-a052-7273259f2bbb
@@ -157,7 +157,7 @@ Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium scor
 - `volume_score`: total calcium volume via Agatston scoring
 """
 function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
-	@assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
+    @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
@@ -173,7 +173,7 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
             continue
         end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
-		for label_idx in eachindex(unique(lesion_map))
+        for label_idx in eachindex(unique(lesion_map))
             idxs = findall(x -> x == label_idx, lesion_map)
             num_label_idxs = length(idxs)
             if num_label_idxs < min_size_pixels
@@ -217,8 +217,8 @@ Given an input `vol` and known pixel/voxel `spacing`, calculate the calcium scor
 - `volume_score`: total calcium volume via Agatston scoring
 - `mass_score`: total calcium mass via Agatston scoring
 """
-function score_test(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
-	@assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
+function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
+    @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
@@ -235,7 +235,7 @@ function score_test(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120
             continue
         end
         lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
-		for label_idx in eachindex(unique(lesion_map))
+        for label_idx in eachindex(unique(lesion_map))
             idxs = findall(x -> x == label_idx, lesion_map)
             num_label_idxs = length(idxs)
             if num_label_idxs < min_size_pixels
@@ -250,12 +250,12 @@ function score_test(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120
             push!(attenuations, intensities...)
         end
     end
-	local rel_mass_score
-	if length(attenuations) == 0
-		rel_mass_score = 0
-	else
-		rel_mass_score = mean(attenuations) * volume_score
-	end
+    local rel_mass_score
+    if length(attenuations) == 0
+        rel_mass_score = 0
+    else
+        rel_mass_score = mean(attenuations) * volume_score
+    end
     abs_mass_score = rel_mass_score * mass_calibration_factor
     return agatston_score, volume_score, abs_mass_score
 end
