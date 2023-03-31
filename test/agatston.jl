@@ -39,7 +39,27 @@ end
     @test agatston_score ≈ 16 && mass_score ≈ 0.6mg
 end
 
+# ╔═╡ f73e5e28-daa5-4a14-8493-9d5cad0c55ce
+@testset "Agatston, various kVs" begin
+	hus = [260, 280, 310, 400]
+	kVs = [135, 120, 100, 80]
+	scores = []
+	for i in 1:4
+		arr = [
+			0 hus[i] hus[i] hus[i] 0 0 0
+			0 hus[i] hus[i] hus[i] 0 0 0
+			0 hus[i] hus[i] hus[i] 0 0 0
+			0 hus[i] hus[i] hus[i] 0 0 0
+		]
+		arr = cat(arr, arr, dims=3)
+		scr, _ = score(arr, [0.5, 0.5, 0.5], Agatston(); kV=kVs[i])
+		push!(scores, scr)
+	end
+	@test unique(scores) == [12]
+end
+
 # ╔═╡ Cell order:
 # ╠═f914d5dc-9d93-49df-b05d-2a752ef8bc60
 # ╠═01cb8e86-5072-42b6-b262-2412e3192ed4
 # ╠═6788b122-50b1-11ed-3603-c30ea99a0af2
+# ╠═f73e5e28-daa5-4a14-8493-9d5cad0c55ce
