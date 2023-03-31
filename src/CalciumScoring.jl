@@ -1,6 +1,5 @@
 module CalciumScoring
 
-using Images
 using Statistics
 using Distributions
 using DSP

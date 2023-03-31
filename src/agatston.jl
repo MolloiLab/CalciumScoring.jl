@@ -9,8 +9,9 @@ using InteractiveUtils
 begin
     using Pkg
     Pkg.activate("..")
-    using Revise, PlutoUI, Images, CalciumScoring, Statistics
+    using Revise, PlutoUI, ImageMorphology, CalciumScoring, Statistics
     using Unitful: mm, mg, ustrip
+    using ImageMorphology: label_components
 end
 
 # ╔═╡ c73efe8b-e72b-48a8-a966-5192d9c99abb

@@ -1,3 +1,4 @@
+using ImageMorphology: label_components
 """
 	mask_elements(img, threshold, connectivity)
 Remove every element that is below the `threshold` and
@@ -15,10 +16,10 @@ all elements are 1 for elements that should be kept based on
 """
 function mask_elements(img, threshold, connectivity)
     mask = img .< threshold
-    label = Images.label_components(mask)
+    label = label_components(mask)
     n = length(unique(label))
     indices = []
-    for lbl in 0:(n - 1)
+    for lbl in 0:(n-1)
         lbl_mask = map(x -> x == lbl, label)
         num = count(lbl_mask)
         if num < connectivity
@@ -26,7 +27,7 @@ function mask_elements(img, threshold, connectivity)
             push!(indices, rmv_indices)
         end
     end
-    for i in 1:length(indices)
+    for i in eachindex(indices)
         idx = indices[i]
         mask[idx] .= 0
     end
