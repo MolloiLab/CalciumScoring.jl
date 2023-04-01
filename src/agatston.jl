@@ -164,7 +164,7 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
     min_size_pixels = div(round(min_size / area), 1)
     comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
     agatston_score = 0
-    volume_score = 0mm^3
+    volume_score = 0
     for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
@@ -225,7 +225,7 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
     min_size_pixels = div(round(min_size / area), 1)
     comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
     agatston_score = 0
-    volume_score = 0mm^3
+    volume_score = 0
     attenuations = []
     for z in axes(vol, 3)
         slice = vol[:, :, z]
