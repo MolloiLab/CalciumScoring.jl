@@ -184,7 +184,7 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
             weight = _weight_thresholds(kV, max_intensity)
             slice_score = num_label_idxs * area * min(weight, 4)
             agatston_score += slice_score
-            volume_score += num_label_idxs * spacing[1]mm * spacing[2]mm * spacing[3]mm
+            volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3]
         end
     end
     return agatston_score, volume_score
@@ -246,7 +246,7 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
             weight = _weight_thresholds(kV, max_intensity)
             slice_score = num_label_idxs * area * min(weight, 4)
             agatston_score += slice_score
-            volume_score += num_label_idxs * spacing[1]mm * spacing[2]mm * spacing[3]mm
+            volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3]
             push!(attenuations, intensities...)
         end
     end
