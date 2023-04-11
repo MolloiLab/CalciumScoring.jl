@@ -21,10 +21,10 @@ end
     v1 = ones((4, 2, 2))
     v2 = zeros((4, 2, 2))
     vol = hcat(v1, v2) * 400
-    spacing = [0.5, 0.5, 0.5]mm
+    spacing = [0.5, 0.5, 0.5]
     alg = Agatston()
     agatston_score, volume_score = score(vol, spacing, alg)
-    @test agatston_score ≈ 16 && volume_score == 2mm^3
+    @test agatston_score ≈ 16 && volume_score == 2
 end
 
 # ╔═╡ 6788b122-50b1-11ed-3603-c30ea99a0af2
@@ -32,11 +32,11 @@ end
     v1 = ones((4, 2, 2))
     v2 = zeros((4, 2, 2))
     vol = hcat(v1, v2) * 400
-    spacing = [0.5, 0.5, 0.5]mm
+    spacing = [0.5, 0.5, 0.5]
     alg = Agatston()
-    mass_cal_factor = 0.00075mg / mm^3
+    mass_cal_factor = 0.00075
     agatston_score, volume_score, mass_score = score(vol, spacing, mass_cal_factor, alg)
-    @test agatston_score ≈ 16 && mass_score ≈ 0.6mg
+    @test agatston_score ≈ 16 && mass_score ≈ 0.6
 end
 
 # ╔═╡ f73e5e28-daa5-4a14-8493-9d5cad0c55ce
