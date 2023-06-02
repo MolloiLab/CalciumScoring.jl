@@ -1,7 +1,7 @@
 name = "CalciumScoring"
 uuid = "9c0cb1da-21b1-4615-967b-153e03110a28"
 authors = ["Dale <djblack@uci.edu> and contributors"]
-version = "0.1.0"
+version = "0.1.2"
 
 [deps]
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
@@ -18,7 +18,7 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
-julia = "1.8"
+julia = "1.9"
 DSP = "0.7.2"
 Distributions = "0.25.16"
 ImageMorphology = "0.2.11"
