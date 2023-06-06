@@ -2,7 +2,7 @@
 
 julia_version = "1.9.0"
 manifest_format = "2.0"
-project_hash = "8154a841ddbe05468b2e1efed51bbf5c8a8ec635"
+project_hash = "78765fad6b481564dc9852cacd4b60ed0654b9fb"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -395,9 +395,9 @@ version = "2.3.0"
 
 [[deps.LsqFit]]
 deps = ["Distributions", "ForwardDiff", "LinearAlgebra", "NLSolversBase", "OptimBase", "Random", "StatsBase"]
-git-tree-sha1 = "91aa1442e63a77f101aff01dec5a821a17f43922"
+git-tree-sha1 = "00f475f85c50584b12268675072663dfed5594b2"
 uuid = "2fda8390-95c7-5789-9bda-21331edee243"
-version = "0.12.1"
+version = "0.13.0"
 
 [[deps.MIMEs]]
 git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
