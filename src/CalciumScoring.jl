@@ -6,7 +6,6 @@ using DSP
 
 include("./agatston.jl")
 include("./integrated.jl")
-include("./material_decomposition.jl")
 include("./spatially_weighted.jl")
 include("./utils.jl")
 include("./volume_fraction.jl")

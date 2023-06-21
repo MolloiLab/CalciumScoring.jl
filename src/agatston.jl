@@ -27,14 +27,14 @@ the given range of `max_intensity` values.
 
 The function returns the weight threshold as an integer value between 0 and 4.
 
-#### Inputs
+## Inputs
 - `kV`: The kilovoltage peak (kVp) value of the CT scan (Accepted values: 70, 80, 100, 120, or 135)
 - `max_intensity`: The maximum intensity of a calcified lesion in Hounsfield units (HU)
 
-#### Returns
+## Returns
 - `weight`: The weight threshold for the Agatston scoring algorithm (integer value between 0 and 4)
 
-#### Reference
+## Reference
 - [Gräni, Christoph et al. “Ultra-Low-Dose Coronary Artery Calcium Scoring Using Novel Scoring Thresholds for Low Tube Voltage Protocols—a Pilot Study.” European heart journal cardiovascular imaging 19.12 (2018): 1362–1371. Web.](https://doi.org/10.1093/ehjci/jey019)
 """
 function _weight_thresholds(kV, max_intensity)
@@ -119,11 +119,12 @@ struct Agatston <: CalciumScore end
     score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
     score(vol, spacing::Array{T}, mass_cal_factor::Unitful.Quantity, alg::Agatston; kV=120, min_size_mm=1) where {T<:Unitful.Quantity}
 
-Calculate the calcium score via the traditional Agatston scoring technique, as outlined in the [original paper](10.1016/0735-1097(90)90282-T). 
-Energy (`kV`) specific `threshold`s are determined based on previous [publications](https://doi.org/10.1093/ehjci/jey019). 
-Also, it converts the Agatston score to a calcium mass score via the `mass_cal_factor` if provided.
+Calculate the calcium score via the traditional Agatston scoring technique, as outlined in the 
+[original paper](10.1016/0735-1097(90)90282-T). Energy (`kV`) specific `threshold`s are determined based on 
+previous [publications](https://doi.org/10.1093/ehjci/jey019). Also, it converts the Agatston score to a 
+calcium mass score via the `mass_cal_factor` if provided.
 
-#### Inputs
+## Inputs
 - `vol`: input volume containing just the region of interest
 - `spacing`: known pixel/voxel spacing (can be an array of `Unitful.Quantity`)
 - `alg::Agatston`: Agatston scoring algorithm `Agatston()`
@@ -132,10 +133,15 @@ Also, it converts the Agatston score to a calcium mass score via the `mass_cal_f
   - `kV=120`: energy of the input CT scan image
   - `min_size=1`: minimum connected component size (see [`label_components`](https://github.com/JuliaImages/Images.jl))
 
-#### Returns
+## Returns
 - `agatston_score`: total Agatston score
 - `volume_score`: total calcium volume via Agatston scoring (can be a `Unitful.Quantity`)
 - `abs_mass_score`: (optional) total calcium mass after calibration, returned only when `mass_cal_factor` is provided
+
+## References
+[Quantification of coronary artery calcium using ultrafast computed tomography](https://doi.org/10.1016/0735-1097(90)90282-t)
+
+[Ultra-low-dose coronary artery calcium scoring using novel scoring thresholds for low tube voltage protocols—a pilot study ](https://doi.org/10.1093/ehjci/jey019)
 """
 function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
     @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
