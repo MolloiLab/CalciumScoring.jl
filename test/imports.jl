@@ -1,2 +1,0 @@
-using CalciumScoring
-using Test
