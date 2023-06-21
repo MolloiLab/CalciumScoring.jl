@@ -2,20 +2,24 @@ using Revise
 using CalciumScoring
 
 """
-```julia
-struct SpatiallyWeighted <: CalciumScore end
-```
-Lets Julia know (via multiple dispatch) that the algorithm of choice when calculating the calcium score should be the Spatially Weighted Calcium Scoring algorithm
+    struct SpatiallyWeighted <: CalciumScore end
+
+Lets Julia know (via multiple dispatch) that the algorithm of choice when calculating the calcium score should be the Spatially Weighted Calcium Scoring algorithm.
 """
 struct SpatiallyWeighted <: CalciumScore end
 
-
 """
-```julia
-score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
-```
+    score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
+    score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
+    score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
+    score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
 
-Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting each voxel based on a previous calibration (usually 100 mg/cc)
+Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting each voxel based on a previous calibration (usually 100 mg/cc). The function can be called with different parameters:
+
+1. `vol::AbstractMatrix`, `calibration`, `alg::SpatiallyWeighted` - Applies the algorithm to a 2D volume with a calibration array.
+2. `vol::AbstractMatrix`, `μ`, `σ`, `alg::SpatiallyWeighted` - Applies the algorithm to a 2D volume with given mean `μ` and standard deviation `σ`.
+3. `vol::AbstractArray`, `calibration`, `alg::SpatiallyWeighted` - Applies the algorithm to a 3D volume with a calibration array.
+4. `vol::AbstractArray`, `μ`, `σ`, `alg::SpatiallyWeighted` - Applies the algorithm to a 3D volume with given mean `μ` and standard deviation `σ`.
 
 ## Citation
 []
@@ -37,17 +41,6 @@ function score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
     return sum(weighted_arr)
 end
 
-
-"""
-```julia
-score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
-```
-
-Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting each voxel based on a previous calibration (usually 100 mg/cc)
-
-## Citation
-[]
-"""
 function score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
     d = Distributions.Normal(μ, σ)
 
@@ -64,17 +57,6 @@ function score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
     return sum(weighted_arr)
 end
 
-
-"""
-```julia
-score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
-```
-
-Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting each voxel based on a previous calibration (usually 100 mg/cc)
-
-## Citation
-[]
-"""
 function score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
     μ, σ = mean(calibration), std(calibration)
     d = Distributions.Normal(μ, σ)
@@ -97,17 +79,6 @@ function score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
     return sum(weighted_arr)
 end
 
-
-"""
-```julia
-score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
-```
-
-Spatially Weighted Calcium Scoring algorithm. Avoids thresholding by weighting each voxel based on a previous calibration (usually 100 mg/cc)
-
-## Citation
-[]
-"""
 function score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
     d = Distributions.Normal(μ, σ)
 

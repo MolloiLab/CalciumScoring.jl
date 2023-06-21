@@ -6,7 +6,7 @@ using CalciumScoring
         vol, 
         I=sum(vol), 
         N=length(vol)
-        )
+    )
 
 # Arguments
 - vol: region of interest
@@ -33,24 +33,27 @@ function Integrated(
 end
 
 """
-```julia
     score(vol, S_Bkg, S_Obj, algorithm::Integrated)
-```
+    score(vol, S_Bkg, S_Obj, size, algorithm::Integrated)
+    score(vol, S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
 
 Given a volume `vol` of interest, use the integrated intensity
 approach to find the total number of object voxels/volume/mass 
-contained in `vol`
+contained in `vol`.
+
+The function can be called with different parameters:
+
+1. `vol`, `S_Bkg`, `S_Obj`, `algorithm` - Returns the total number of object voxels.
+2. `vol`, `S_Bkg`, `S_Obj`, `size`, `algorithm` - Returns the total object volume.
+3. `vol`, `S_Bkg`, `S_Obj`, `size`, `ρ`, `algorithm` - Returns the total object mass.
 
 # Arguments
-- vol: region of interest
-- S_Bkg: pure background signal intensity in the `vol`
-- S_Obj: pure object signal intensity in the `vol`
-- size: size of the voxels in the given `vol`
-- ρ: density of the given object of interest contained within
-    the `vol`
-- algorithm: the `Integrated` algorithm which accounts for
-    noise and partial volume effect by integrating the
-    the intensity of the entire volume `vol`
+- `vol`: region of interest
+- `S_Bkg`: pure background signal intensity in the `vol`
+- `S_Obj`: pure object signal intensity in the `vol`
+- `size`: size of the voxels in the given `vol` (only for the 2nd and 3rd variations)
+- `ρ`: density of the given object of interest contained within the `vol` (only for the 3rd variation)
+- `algorithm`: the `Integrated` algorithm which accounts for noise and partial volume effect by integrating the intensity of the entire volume `vol`
 
 # Citation
 'Accurate quantification of vessel cross-sectional area using CT
@@ -65,31 +68,6 @@ function score(S_Bkg, S_Obj, algorithm::Integrated)
     return N_Obj
 end
 
-"""
-```julia
-    score(vol, S_Bkg, S_Obj, size, algorithm::Integrated)
-```
-
-Given a volume `vol` of interest, use the integrated intensity
-approach to find the total number of object voxels/volume/mass 
-contained in `vol`
-
-# Arguments
-- vol: region of interest
-- S_Bkg: pure background signal intensity in the `vol`
-- S_Obj: pure object signal intensity in the `vol`
-- size: size of the voxels in the given `vol`
-- ρ: density of the given object of interest contained within
-    the `vol`
-- algorithm: the `Integrated` algorithm which accounts for
-    noise and partial volume effect by integrating the
-    the intensity of the entire volume `vol`
-
-# Citation
-'Accurate quantification of vessel cross-sectional area using CT
-angiography: a simulation study' [Molloi, Johnson, Ding, Lipinski] 
-(DOI: 10.1007/s10554-016-1007-9)
-"""
 function score(S_Bkg, S_Obj, size, algorithm::Integrated)
     I = algorithm.I
     N = algorithm.N
@@ -99,31 +77,6 @@ function score(S_Bkg, S_Obj, size, algorithm::Integrated)
     return Vol_Obj
 end
 
-"""
-```julia
-    score(vol, S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
-```
-
-Given a volume `vol` of interest, use the integrated intensity
-approach to find the total number of object voxels/volume/mass 
-contained in `vol`
-
-# Arguments
-- vol: region of interest
-- S_Bkg: pure background signal intensity in the `vol`
-- S_Obj: pure object signal intensity in the `vol`
-- size: size of the voxels in the given `vol`
-- ρ: density of the given object of interest contained within
-    the `vol`
-- algorithm: the `Integrated` algorithm which accounts for
-    noise and partial volume effect by integrating the
-    the intensity of the entire volume `vol`
-
-# Citation
-'Accurate quantification of vessel cross-sectional area using CT
-angiography: a simulation study' [Molloi, Johnson, Ding, Lipinski] 
-(DOI: 10.1007/s10554-016-1007-9)
-"""
 function score(S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
     I = algorithm.I
     N = algorithm.N

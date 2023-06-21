@@ -9,22 +9,28 @@ using Unitful: mm, mg
     vol = hcat(v1, v2) * 400
     spacing = [0.5, 0.5, 0.5]
     alg = Agatston()
+
+    # Agatston score
     agatston_score, volume_score = score(vol, spacing, alg)
     @test agatston_score ≈ 16 && volume_score == 2
-end
 
-@testset "Agatston Mass" begin
-    v1 = ones((4, 2, 2))
-    v2 = zeros((4, 2, 2))
-    vol = hcat(v1, v2) * 400
-    spacing = [0.5, 0.5, 0.5]
-    alg = Agatston()
+    # Mass score
     mass_cal_factor = 0.00075
     agatston_score, volume_score, mass_score = score(vol, spacing, mass_cal_factor, alg)
     @test agatston_score ≈ 16 && mass_score ≈ 0.6
-end
 
-@testset "Agatston, various kVs" begin
+    # Agatston Unitful
+    spacing = [0.5, 0.5, 0.5]mm
+    agatston_score, volume_score = score(vol, spacing, alg)
+    @test agatston_score ≈ 16 && volume_score == 2mm^3
+
+    # Agatston Mass Unitful
+    spacing = [0.5, 0.5, 0.5]mm
+    mass_cal_factor = 0.00075mg / mm^3
+    agatston_score, volume_score, mass_score = score(vol, spacing, mass_cal_factor, alg)
+    @test agatston_score ≈ 16 && mass_score ≈ 0.6mg
+
+    # Various kVs
     hus = [260, 280, 310, 400]
     kVs = [135, 120, 100, 80]
     scores = []
@@ -40,25 +46,4 @@ end
         push!(scores, scr)
     end
     @test unique(scores) == [12]
-end
-
-@testset "Agatston Unitful" begin
-    v1 = ones((4, 2, 2))
-    v2 = zeros((4, 2, 2))
-    vol = hcat(v1, v2) * 400
-    spacing = [0.5, 0.5, 0.5]mm
-    alg = Agatston()
-    agatston_score, volume_score = score(vol, spacing, alg)
-    @test agatston_score ≈ 16 && volume_score == 2mm^3
-end
-
-@testset "Agatston Mass" begin
-    v1 = ones((4, 2, 2))
-    v2 = zeros((4, 2, 2))
-    vol = hcat(v1, v2) * 400
-    spacing = [0.5, 0.5, 0.5]mm
-    alg = Agatston()
-    mass_cal_factor = 0.00075mg / mm^3
-    agatston_score, volume_score, mass_score = score(vol, spacing, mass_cal_factor, alg)
-    @test agatston_score ≈ 16 && mass_score ≈ 0.6mg
 end

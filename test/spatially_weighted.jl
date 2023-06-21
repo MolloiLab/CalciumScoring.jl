@@ -2,7 +2,8 @@ using Revise
 using Test
 using CalciumScoring
 
-@testset "SpatiallyWeighted 2D" begin
+@testset "SpatiallyWeighted" begin
+    # 2D
     vol = [
         10 30 135 145 5 150 100 80 9
         9 40 135 130 5 150 190 80 9
@@ -21,9 +22,8 @@ using CalciumScoring
     answer = 3.7176620417439796
     test = score(vol, calibration, alg)
     @test answer ≈ test
-end
 
-@testset "SpatiallyWeighted 3D" begin
+    # 3D
     vol_ = [
         0 46 58 123 133 104 65 7
         19 25 20 125 163 83 -22 -134

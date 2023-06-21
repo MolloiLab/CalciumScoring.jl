@@ -20,9 +20,7 @@ using CalciumScoring
         0 0 0 0
     ])
     @test mask_elements(img, 0, 2) == answer
-end
 
-@testset "mask_elements" begin
     img = [
         1 -2 -2 -2
         -2 -2 -2 -2
