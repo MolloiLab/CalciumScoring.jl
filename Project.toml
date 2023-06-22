@@ -12,16 +12,16 @@ Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
+[compat]
+DSP = "^0.7.2"
+Distributions = "^0.25.16"
+ImageMorphology = "^0.2.11, 0.4"
+Revise = "^3.2.3"
+Unitful = "^1.10.0"
+julia = "1.9"
+
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test"]
-
-[compat]
-DSP = "^0.7.2"
-Distributions = "^0.25.16"
-ImageMorphology = "^0.2.11"
-Revise = "^3.2.3"
-Unitful = "^1.10.0"
-julia = "1.9"
