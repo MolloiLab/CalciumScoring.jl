@@ -1,6 +1,7 @@
 using Revise
 using Test
 using CalciumScoring
+using Statistics: mean, std
 
 @testset "SpatiallyWeighted" begin
     # 2D
@@ -22,6 +23,7 @@ using CalciumScoring
     answer = 3.7176620417439796
     test = score(vol, calibration, alg)
     @test answer ≈ test
+    @test score(vol, mean(calibration), std(calibration), alg) ≈ answer
 
     # 3D
     vol_ = [
@@ -48,4 +50,5 @@ using CalciumScoring
     answer = 1.4580418264134944
     test = score(vol, calibration, alg)
     @test answer ≈ test
+    @test score(vol, mean(calibration), std(calibration), alg) ≈ answer
 end
