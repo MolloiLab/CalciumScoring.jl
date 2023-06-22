@@ -251,13 +251,11 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
             push!(attenuations, intensities...)
         end
     end
-    if length(attenuations) == 0
-        return agatston_score, volume_score, 0
-    else
-        rel_mass_score = mean(attenuations) * volume_score
-        abs_mass_score = rel_mass_score * mass_calibration_factor
-        return agatston_score, volume_score, abs_mass_score
-    end
+    _rel_mass_score = isempty(attenuations) ? 0.0 : mean(attenuations)
+    rel_mass_score = _rel_mass_score * volume_score
+    abs_mass_score = rel_mass_score * mass_calibration_factor
+        
+    return agatston_score, volume_score, abs_mass_score
 end
 
 function score(vol, spacing::Array{T}, mass_calibration_factor::Quantity, alg::Agatston; kV=120, min_size=1) where {T<:Quantity}

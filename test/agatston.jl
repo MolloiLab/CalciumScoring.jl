@@ -19,6 +19,11 @@ using Unitful: mm, mg
     agatston_score, volume_score, mass_score = score(vol, spacing, mass_cal_factor, alg)
     @test agatston_score ≈ 16 && mass_score ≈ 0.6
 
+    # Mass score with zeros
+    @test score(zeros(3, 3), spacing, mass_cal_factor, alg) == (0, 0, 0)
+    @test score(zeros(3, 3, 3), spacing, mass_cal_factor, alg) == (0, 0, 0)
+
+
     # Agatston Unitful
     spacing = [0.5, 0.5, 0.5]mm
     agatston_score, volume_score = score(vol, spacing, alg)

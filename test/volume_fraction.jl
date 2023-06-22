@@ -45,4 +45,10 @@ using CalciumScoring
 
     s3 = score(vol, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, VolumeFraction())
     @test s3 ≈ s1 * voxel_size * density_calcium
+
+    zeros1 = score(zeros(3, 3), hu_calcium, 0, VolumeFraction())
+    @test zeros1 == 0
+
+    zeros2 = score(zeros(3, 3), hu_calcium, 0, VolumeFraction())
+    @test zeros2 == 0
 end
