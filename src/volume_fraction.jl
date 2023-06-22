@@ -46,6 +46,9 @@ depending on the provided arguments.
     and returns the volume of the calcification.
 - When called with `vol`, `hu_calcium`, `hu_heart_tissue`, `voxel_size`, `density_calcium`, and `alg`, this 
     function calculates and returns the mass of the calcification.
+
+## Reference
+[Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1101/2023.01.12.23284482)
 """
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
     number_calcium_voxels = []
