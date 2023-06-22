@@ -144,7 +144,9 @@ calcium mass score via the `mass_cal_factor` if provided.
 [Ultra-low-dose coronary artery calcium scoring using novel scoring thresholds for low tube voltage protocols—a pilot study ](https://doi.org/10.1093/ehjci/jey019)
 """
 function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
-    @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
+    if !(kV in [70, 80, 100, 120, 135])
+        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
+    end
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
@@ -178,7 +180,9 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
 end
 
 function score(vol, spacing::Array{T}, alg::Agatston; kV=120, min_size=1) where {T<:Quantity}
-    @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
+    if !(kV in [70, 80, 100, 120, 135])
+        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
+    end
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
@@ -213,7 +217,9 @@ end
 
 
 function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
-    @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
+    if !(kV in [70, 80, 100, 120, 135])
+        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
+    end    
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
@@ -221,7 +227,7 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
     comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
     agatston_score = 0
     volume_score = 0
-    attenuations = []
+    attenuations = Float64[]
     for z in axes(vol, 3)
         slice = vol[:, :, z]
         thresholded_slice = slice .> threshold
@@ -245,18 +251,19 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
             push!(attenuations, intensities...)
         end
     end
-    local rel_mass_score
     if length(attenuations) == 0
-        rel_mass_score = 0
+        return agatston_score, volume_score, 0
     else
         rel_mass_score = mean(attenuations) * volume_score
+        abs_mass_score = rel_mass_score * mass_calibration_factor
+        return agatston_score, volume_score, abs_mass_score
     end
-    abs_mass_score = rel_mass_score * mass_calibration_factor
-    return agatston_score, volume_score, abs_mass_score
 end
 
 function score(vol, spacing::Array{T}, mass_calibration_factor::Quantity, alg::Agatston; kV=120, min_size=1) where {T<:Quantity}
-    @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
+    if !(kV in [70, 80, 100, 120, 135])
+        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
+    end
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
@@ -288,10 +295,9 @@ function score(vol, spacing::Array{T}, mass_calibration_factor::Quantity, alg::A
             push!(attenuations, intensities...)
         end
     end
-    local rel_mass_score
-    if length(attenuations) == 0
-        rel_mass_score = 0
-    else
+
+    local rel_mass_score = 0.0
+    if length(attenuations) != 0
         rel_mass_score = mean(attenuations) * volume_score
     end
     abs_mass_score = rel_mass_score * mass_calibration_factor

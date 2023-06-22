@@ -71,7 +71,7 @@ function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg
             push!(number_calcium_voxels, percent)
         end
     end
-    return sum(number_calcium_voxels) * voxel_size * density_calcium
+    return sum(number_calcium_voxels) * voxel_size
 end
 
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
@@ -111,7 +111,7 @@ function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg:
             end
         end
     end
-    return sum(number_calcium_voxels) * voxel_size * density_calcium
+    return sum(number_calcium_voxels) * voxel_size
 end
 
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
