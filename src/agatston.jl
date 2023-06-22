@@ -1,6 +1,6 @@
-using Revise, ImageMorphology, CalciumScoring, Statistics
-using Unitful
-using Unitful: mm, mg, ustrip
+using Revise
+using CalciumScoring
+using Unitful: mm, mg, ustrip, Quantity
 using ImageMorphology: label_components
 
 """
@@ -177,7 +177,7 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
     return agatston_score, volume_score
 end
 
-function score(vol, spacing::Array{T}, alg::Agatston; kV=120, min_size=1) where {T<:Unitful.Quantity}
+function score(vol, spacing::Array{T}, alg::Agatston; kV=120, min_size=1) where {T<:Quantity}
     @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
@@ -255,7 +255,7 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
     return agatston_score, volume_score, abs_mass_score
 end
 
-function score(vol, spacing::Array{T}, mass_calibration_factor::Unitful.Quantity, alg::Agatston; kV=120, min_size=1) where {T<:Unitful.Quantity}
+function score(vol, spacing::Array{T}, mass_calibration_factor::Quantity, alg::Agatston; kV=120, min_size=1) where {T<:Quantity}
     @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be 70, 80, 100, 120 or 135"
     spacing = ustrip(spacing)
     threshold = round(378 * exp(-0.009 * kV))
