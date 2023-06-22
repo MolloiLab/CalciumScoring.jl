@@ -147,7 +147,7 @@ function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
     if !(kV in [70, 80, 100, 120, 135])
         error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
     end
-    spacing = ustrip(spacing)
+    spacing = ustrip.(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
     min_size_pixels = div(round(min_size / area), 1)
@@ -220,7 +220,7 @@ function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min
     if !(kV in [70, 80, 100, 120, 135])
         error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
     end    
-    spacing = ustrip(spacing)
+    spacing = ustrip.(spacing)
     threshold = round(378 * exp(-0.009 * kV))
     area = spacing[1] * spacing[2]
     min_size_pixels = div(round(min_size / area), 1)
