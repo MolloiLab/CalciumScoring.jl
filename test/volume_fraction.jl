@@ -3,6 +3,7 @@ using Test
 using CalciumScoring
 
 @testset "VolumeFraction" begin
+    #-- 2D --#
     # Define test data
     vol = [
         400 300
@@ -25,6 +26,23 @@ using CalciumScoring
     @test s2 ≈ s1 * voxel_size
 
     # Test score function for mass of calcification
+    s3 = score(vol, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, VolumeFraction())
+    @test s3 ≈ s1 * voxel_size * density_calcium
+
+    #-- 3D --#
+    v = [
+        400 300
+        200 100
+        0 0
+    ]
+    vol = cat(v, v; dims = 3)
+
+    s1 = score(vol, hu_calcium, hu_heart_tissue, VolumeFraction())
+    @test s1 ≈ 8/3
+
+    s2 = score(vol, hu_calcium, hu_heart_tissue, voxel_size, VolumeFraction())
+    @test s2 ≈ s1 * voxel_size
+
     s3 = score(vol, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, VolumeFraction())
     @test s3 ≈ s1 * voxel_size * density_calcium
 end
