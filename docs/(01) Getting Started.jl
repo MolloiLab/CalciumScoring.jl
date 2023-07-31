@@ -52,7 +52,7 @@ md"""
 # ╔═╡ 460845fa-8f82-4ad5-8c4f-c11f65385d32
 md"""
 ## Import Packages
-First, let's import the most up-to-date version of CalciumScoring.jl, which can be found on the main/master branch of the [GitHub repository](https://github.com/Dale-Black/CalciumScoring.jl). Be aware this can take a long time, especially if this is the first time being downloaded. Future work on this package will focus on improving this.
+First, let's import CalciumScoring.jl, along with CairoMakie.jl for graphs, and PlutoUI.jl for some interactivity. Be aware this can take a long time, especially if this is the first time being downloaded. Future work on this package will focus on improving this.
 """
 
 # ╔═╡ 357faaad-e1af-436a-b4e1-91108e605460
