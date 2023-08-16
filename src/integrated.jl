@@ -44,7 +44,7 @@ The function can be called with different parameters:
 
 1. `S_Bkg`, `S_Obj`, `algorithm` - Returns the total number of object voxels.
 2. `S_Bkg`, `S_Obj`, `size`, `algorithm` - Returns the total object volume.
-3. ``S_Bkg`, `S_Obj`, `size`, `ρ`, `algorithm` - Returns the total object mass.
+3. `S_Bkg`, `S_Obj`, `size`, `ρ`, `algorithm` - Returns the total object mass.
 
 ## Inputs
 - `S_Bkg`: pure background signal intensity in the `vol`
