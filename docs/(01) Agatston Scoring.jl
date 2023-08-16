@@ -14,51 +14,69 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 22b2617f-9fed-47c7-891b-6c1983fdbda5
+# ╔═╡ 584c39b6-e3c6-426f-a917-f415b54947c3
 using PlutoUI, CairoMakie, CalciumScoring
 
-# ╔═╡ 631951da-4b80-45d7-8501-657586856809
+# ╔═╡ 422bc5a6-665b-44de-bd8d-b3a18e0497e5
 using ImageFiltering, ImageMorphology, Noise
 
-# ╔═╡ 68e81095-0019-4e41-b0d3-bfb756ad17f2
+# ╔═╡ 495e2521-543c-47b9-b5fb-38b3162d3c26
 using Statistics
 
-# ╔═╡ 41898031-4baa-47a8-95ae-bb42b5483193
+# ╔═╡ 24de8bc6-e495-49d4-a1b2-673f714bdf9f
 md"""
-!!! info "Overview"
-	This package contains four different state of the art coronary artery calcium (CAC) quantification methods.
-	1. Agatston scoring [1, 2]
-	2. Volume fraction calcium mass [3]
-	3. Integrated calcium mass [3, 4]
-	4. Spatially weighted calcium scoring [5, 6]
-	
-	This notebook will briefly showcase how to use CalciumScoring.jl to quantify calcium using the traditional Agatston scoring technique.
-	
-	**References**
-	1. [Quantification of coronary artery calcium using ultrafast computed tomography](https://doi.org/10.1016/0735-1097(90)90282-t)
-	2. [Ultra-low-dose coronary artery calcium scoring using novel scoring thresholds for low tube voltage protocols—a pilot study ](https://doi.org/10.1093/ehjci/jey019)
-	3. [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
-	4. [Integrated intensity-based technique for coronary artery calcium mass measurement: A phantom study](https://doi.org/10.1002/mp.16326)
-	5. [An alternative method for quantifying coronary artery calcification: the multi-ethnic study of atherosclerosis (MESA)](https://doi.org/10.1186/1471-2342-12-14)
-	6. [Spatially Weighted Coronary Artery Calcium Score and Coronary Heart Disease Events in the Multi-Ethnic Study of Atherosclerosis](https://doi.org/10.1161/CIRCIMAGING.120.011981)
-
+# Agatston Scoring
 """
 
-# ╔═╡ e0ee3cd9-f889-48de-99d8-dd1ac0ad4dc2
-md"""
-# Getting Started
+# ╔═╡ 1e656925-3b85-498d-b141-2066de514aed
+html"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({startOnLoad:true});
+    </script>
+</head>
+<body>
+    <div class="mermaid">
+        graph TB
+            classDef unique1 fill:#f9d71c,stroke:#333,stroke-width:2px;
+            classDef unique2 fill:#8cd9f5,stroke:#333,stroke-width:2px;
+            A["Overview: Four Different CAC Quantification Methods"]
+            A --> AgatstonRegime
+            A --> CalciumMassRegime
+            subgraph AgatstonRegime["Agatston Scoring Regime"]
+                B["Agatston Scoring"]
+                E["Spatially Weighted Calcium Scoring"]
+            end
+            subgraph CalciumMassRegime["Calcium Mass Quantification Regime"]
+                C["Volume Fraction Calcium Mass"]
+                D["Integrated Calcium Mass"]
+            end
+            class B unique1;
+            class C,D,E unique2;
+    </div>
+</body>
+</html>
 """
 
-# ╔═╡ 460845fa-8f82-4ad5-8c4f-c11f65385d32
+# ╔═╡ aa529c31-0503-46c9-a027-b911797a7306
+md"""
+!!! success "Overview"
+	[Previously](/(01) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
+"""
+
+# ╔═╡ 3c866da2-8263-4d4b-93f8-f178d243130d
 md"""
 ## Import Packages
 First, let's import CalciumScoring.jl, along with CairoMakie.jl for graphs, and PlutoUI.jl for some interactivity. Be aware this can take a long time, especially if this is the first time being downloaded. Future work on this package will focus on improving this.
 """
 
-# ╔═╡ 357faaad-e1af-436a-b4e1-91108e605460
+# ╔═╡ 9ee13ae7-71b0-447b-8ce3-60e9649439a9
 TableOfContents()
 
-# ╔═╡ 5a487664-b67b-460b-bd1a-df0890b8a603
+# ╔═╡ 5ddaf3d2-7dd6-49ac-934d-cb7bdfd37a43
 md"""
 ## Create Simulated CT Images
 Below we will create a simulated 3D CT image. The first 3 slices correspond to a simulated coronary artery containing some unknown amount of calcium. The last 3 slices correspond to a simulated calibration rod of calcium with a known amount of calcium.
@@ -66,7 +84,7 @@ Below we will create a simulated 3D CT image. The first 3 slices correspond to a
 We will also create two masks. One mask that contains the entire coronary artery including the region along the boundary of the artery that is affected by partial volume effect (blurring). For the other mask, we will contain only the inner-most part of the calibration rod, avoiding any voxels potentially affected by the partial volume effect.
 """
 
-# ╔═╡ 2d551c0f-fb2d-4966-9794-ca7268328577
+# ╔═╡ aee04655-a30d-430d-a732-b3897938d740
 begin
     img = zeros(300, 300, 6)
     h, k = size(img)[1:2] .// 2
@@ -106,11 +124,10 @@ begin
 	end
 end;
 
-
-# ╔═╡ 9ce49797-89b6-4667-b755-84e5d768d2af
+# ╔═╡ f5c7fb00-ee43-44bf-84de-e270f77a0930
 @bind z1 PlutoUI.Slider(axes(img_noisy, 3), show_value = true)
 
-# ╔═╡ ffb5817d-402a-462e-ab0c-628b56227ce9
+# ╔═╡ 58760da5-0b94-4c01-9024-a46fe2e7832a
 let
 	if z1 in 1:3
 		title = "Cross Section of Simulated Coronary Artery"
@@ -124,20 +141,22 @@ let
 	f = Figure(resolution = (1200, 800))
 	ax = CairoMakie.Axis(
 		f[1, 1],
-		title = title
+		title = title,
+		titlesize = 20
 	)
 	heatmap!(img_noisy[:, :, z1], colormap = :grays)
 
 	ax = CairoMakie.Axis(
 		f[1, 2],
-		title = "Mask Overlayed"
+		title = "Mask Overlayed",
+		titlesize = 20
 	)
 	heatmap!(img_noisy[:, :, z1], colormap = :grays)
 	scatter!(mask[:, 1], mask[:, 2], color = :red, markersize = 1.3)
 	f
 end
 
-# ╔═╡ 62762569-92e5-472d-8cb9-c4850cba32a2
+# ╔═╡ 6616ca9c-5de2-4615-8707-8b7138b9f2e7
 md"""
 !!! success "Calculate Ground Truth Calcium Mass"
 	If assume that the calcium in the coronary artery (slices 1-3) has a density of ``0.1 \frac{mg}{mm^3}``, we can then calculate the mass of this calcium within the entire 3D image. We first assume the voxels are of size ``1mm \times 1mm \times 1 mm`` and calculate the volume of the calcium.
@@ -155,34 +174,34 @@ md"""
 	```
 """
 
-# ╔═╡ eff4e2bd-c234-457c-aa6e-d517fbc66757
+# ╔═╡ 46b33f08-05b9-4c26-a9e4-49b0d1dbd0b3
 gt_mass = 376.91 # mg
 
-# ╔═╡ bb4127c3-6b1d-4fb7-8a5d-73b218a01a61
+# ╔═╡ db66f0c7-4256-4ffa-9cd3-90766e08381d
 md"""
 ## Agatston Score
 We can now quantify the amount of calcium contained within the region of interest, using the traditional Agatston score. We will not need to assume any previous knowledge about calcium within the coronary artery.
 """
 
-# ╔═╡ e348a08d-2657-4338-a793-0f7b00a0a5ab
+# ╔═╡ 98b7ed8c-97d8-4966-a65a-27aabf51ec55
 spacing = [1, 1, 1] # mm
 
-# ╔═╡ 96f41255-b4f8-4c3f-81a1-26e2b0f75892
+# ╔═╡ dbe72760-be53-4f72-a8ef-6b46d7a0b824
 mask_small_3D = cat(mask_small, mask_small, mask_small; dims = 3);
 
-# ╔═╡ 8e85a09d-b090-4810-8f5b-4088bf9868b2
+# ╔═╡ 611a3d4e-18ec-45db-998c-be40e7f59cff
 artery_img = img_noisy[:, :, 1:3] .* mask_small_3D;
 
-# ╔═╡ 505586bc-263d-4971-9f0e-c85ead21c39c
+# ╔═╡ 8d883827-995a-433d-9143-03b2326c0610
 @bind z2 PlutoUI.Slider(axes(artery_img, 3), show_value = true)
 
-# ╔═╡ b32df155-0949-4fb4-aed8-6100ca188a44
+# ╔═╡ 161b9ba5-013e-4d7f-86b8-c3aaa53d3206
 heatmap(artery_img[:, :, z2], colormap = :grays)
 
-# ╔═╡ 3348d809-9c0d-482d-828f-38350aa58a04
+# ╔═╡ 5b8e3935-3dc5-4f7b-b83e-6192f1e285cb
 agatson_score, volume_score = score(artery_img, spacing, Agatston())
 
-# ╔═╡ 52205889-701b-4517-9871-abb284c2c945
+# ╔═╡ aeb4d61b-c091-47f5-8ed5-bddee40960d2
 md"""
 ## Mass Score
 We can see that some amount of calcium was detected. But the Agatston score returns an arbitray number and the direct correlation to physical quantities isn't clear. Luckly, the conversion into a mass score is straight forward and this is where the calibration rod comes in. If we measure the intensity of the calibration rod with a known calcium density, we can then correlate this to the unknown calcium in the coronary artery.
@@ -190,22 +209,22 @@ We can see that some amount of calcium was detected. But the Agatston score retu
 CalciumScoring.jl takes care of most of this for us, with the same `score()` function, simply including a `mass_cal_factor` in the arguments. The mass calibration factor is derived by finding the mean intensity of the calibration rod and dividing the density of the rod by this mean intensity.
 """
 
-# ╔═╡ 49663648-ab63-45cc-9035-cde2c67256f2
+# ╔═╡ 1525560b-1ef9-4c9f-b557-0d8f3f37d0cd
 mask_large_3D = cat(mask_large, mask_large, mask_large; dims = 3);
 
-# ╔═╡ c63962ae-f4de-4a13-a961-aed8fec68fd1
+# ╔═╡ 0f63ae63-d8cd-4b38-99d0-e53d0d68ea11
 rod_img = img_noisy[:, :, 4:6] .* mask_large_3D;
 
-# ╔═╡ 90cab5f5-81d9-4150-9792-a33b43ccd26f
+# ╔═╡ dcee2b99-1b32-4945-bd4b-5ad5c07cd8b5
 ρ_rod = 0.2 # mg/mm^3
 
-# ╔═╡ e2e8f1a2-8f7e-4a69-9ec0-a86813d255b9
+# ╔═╡ 07eccab2-6f71-4eaf-b98a-00bc5eaea693
 mass_cal_factor = ρ_rod / mean(rod_img)
 
-# ╔═╡ 5e13fe97-a3d4-4932-81e5-2cd912734d4a
+# ╔═╡ 0231b3f4-8e2b-4f68-be5f-553714069082
 _, _, mass_score = score(artery_img, spacing, mass_cal_factor, Agatston())
 
-# ╔═╡ 25506eb9-a45e-4d70-aef8-5028fba3af18
+# ╔═╡ 3f05439b-afdb-43dc-9246-7c00cdedffb3
 md"""
 !!! info "Agatston Scoring Limitations"
 	We can see that mass score returns a value of about ``194.1 mg``. Compare this to the true mass of ``376.91 mg`` and we see that the mass was underestimated by almost half. This is not a suprise and this is one of the limitations of Agatston scoring. The Agatston scoring approach applies an arbitary threshold to the input array, and any voxel with an intensity below ``130`` (Hounsfield Units, HU) is removed from the calculation.
@@ -215,7 +234,7 @@ md"""
 	This is one of the main limitations of Agatston scoring and some of the motivation behind the recent calcium scoring approaches.
 """
 
-# ╔═╡ 6cbca72a-6c0f-4a86-9046-c888522737e1
+# ╔═╡ 48d50aa7-cdf6-48d4-97f5-ed9713d3b325
 md"""
 !!! warning "Agatston Scoring Threshold"
 
@@ -224,13 +243,10 @@ md"""
 	`score()` accounts for this providing an optional argument `kv = 120`. This assumes that the input image was acquired at a tube voltage of 130, but the user adjust this and the algorithm automatically updates the threshold and weighting factors accordingly.
 """
 
-# ╔═╡ 17a5a766-2795-4b4b-b553-84c0d3d1ca6e
+# ╔═╡ ba707bc7-6b36-4131-97ad-ea757d17d646
 md"""
-## Next Steps
-
-The core function, `score()`, implements all four types of CAC quantification methods. Agatston scoring is the traditional method, but recent advances in the field of medical physics have introduced better approaches to coronary artery calcium mass quantification. We will explore these as we go. 
-
-Check out the [Volume Fraction Calcium Mass](/(02) Volume Fraction.jl) tutorial to see how to implement one of these approaches.
+# Next Steps
+We just demonstrated how `score()` can be used with the `Agatston()` algorithm. This is the traditional calcium scoring algorithm. Check out the [Volume Fraction Calcium Mass]((02) Volume Fraction.jl) tutorial to see how to implement a more recent approach with various benefits.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -245,11 +261,11 @@ PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [compat]
-CairoMakie = "~0.10.7"
+CairoMakie = "~0.10.8"
 CalciumScoring = "~0.2.0"
 ImageFiltering = "~0.7.6"
 ImageMorphology = "~0.4.5"
-Noise = "~0.3.2"
+Noise = "~0.3.3"
 PlutoUI = "~0.7.52"
 """
 
@@ -259,17 +275,18 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.2"
 manifest_format = "2.0"
-project_hash = "88c16361142931b1b0c541e3bb0872493b5dc64c"
+project_hash = "e1412d06efa83082ea35518c952e074738608757"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
-git-tree-sha1 = "cad4c758c0038eea30394b1b671526921ca85b21"
+git-tree-sha1 = "d92ad398961a3ed262d8bf04a1a2b8340f915fef"
 uuid = "621f4979-c628-5d54-868e-fcf4e3e8185c"
-version = "1.4.0"
-weakdeps = ["ChainRulesCore"]
+version = "1.5.0"
+weakdeps = ["ChainRulesCore", "Test"]
 
     [deps.AbstractFFTs.extensions]
     AbstractFFTsChainRulesCoreExt = "ChainRulesCore"
+    AbstractFFTsTestExt = "Test"
 
 [[deps.AbstractLattices]]
 git-tree-sha1 = "f35684b7349da49fcc8a9e520e30e45dbb077166"
@@ -339,10 +356,10 @@ version = "0.1.29"
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Automa]]
-deps = ["ScanByte", "TranscodingStreams"]
-git-tree-sha1 = "48e54446df62fdf9ef76959c32dc33f3cff659ee"
+deps = ["TranscodingStreams"]
+git-tree-sha1 = "ef9997b3d5547c48b41c7bd8899e812a917b409d"
 uuid = "67c07d97-cdcb-5c2c-af73-a7f9c32a568b"
-version = "0.8.3"
+version = "0.8.4"
 
 [[deps.AxisAlgorithms]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "WoodburyMatrices"]
@@ -405,9 +422,9 @@ version = "1.0.5"
 
 [[deps.CairoMakie]]
 deps = ["Base64", "Cairo", "Colors", "FFTW", "FileIO", "FreeType", "GeometryBasics", "LinearAlgebra", "Makie", "PrecompileTools", "SHA"]
-git-tree-sha1 = "e041782fed7614b1726fa250f2bf24fd5c789689"
+git-tree-sha1 = "30562a68ded3dabe80109caf6b4de73a48ac27bc"
 uuid = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-version = "0.10.7"
+version = "0.10.8"
 
 [[deps.Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Pkg", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
@@ -447,9 +464,9 @@ version = "0.1.12"
 
 [[deps.CodeTracking]]
 deps = ["InteractiveUtils", "UUIDs"]
-git-tree-sha1 = "d730914ef30a06732bdd9f763f6cc32e92ffbff1"
+git-tree-sha1 = "a1296f0fe01a4c3f9bf0dc2934efbf4416f5db31"
 uuid = "da1fd8a2-8d9e-5ec2-8556-3022fb5608a2"
-version = "1.3.1"
+version = "1.3.4"
 
 [[deps.ColorBrewer]]
 deps = ["Colors", "JSON", "Test"]
@@ -459,9 +476,9 @@ version = "0.4.0"
 
 [[deps.ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
-git-tree-sha1 = "dd3000d954d483c1aad05fe1eb9e6a715c97013e"
+git-tree-sha1 = "d9a8f86737b665e15a9641ecbac64deef9ce6724"
 uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
-version = "3.22.0"
+version = "3.23.0"
 
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
@@ -494,9 +511,9 @@ version = "0.3.0"
 
 [[deps.Compat]]
 deps = ["UUIDs"]
-git-tree-sha1 = "5ce999a19f4ca23ea484e92a1774a61b8ca4cf8e"
+git-tree-sha1 = "e460f044ca8b99be31d35fe54fc33a5c33dd8ed7"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.8.0"
+version = "4.9.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -552,9 +569,9 @@ version = "1.15.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "cf25ccb972fec4e4817764d01c82386ae94f77b4"
+git-tree-sha1 = "3dbd312d370723b6bb43ba9d02fc36abade4518d"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.14"
+version = "0.18.15"
 
 [[deps.DataValueInterfaces]]
 git-tree-sha1 = "bfc1187b79289637fa0ef6d4436ebdfe6905cbd6"
@@ -592,10 +609,10 @@ deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
 
 [[deps.Distributions]]
-deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SparseArrays", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
-git-tree-sha1 = "e76a3281de2719d7c81ed62c6ea7057380c87b1d"
+deps = ["FillArrays", "LinearAlgebra", "PDMats", "Printf", "QuadGK", "Random", "SpecialFunctions", "Statistics", "StatsAPI", "StatsBase", "StatsFuns", "Test"]
+git-tree-sha1 = "938fe2981db009f531b6332e31c58e9584a2f9bd"
 uuid = "31c24e10-a181-5473-b8eb-7969acd0382f"
-version = "0.25.98"
+version = "0.25.100"
 
     [deps.Distributions.extensions]
     DistributionsChainRulesCoreExt = "ChainRulesCore"
@@ -662,10 +679,10 @@ uuid = "c87230d0-a227-11e9-1b43-d7ebe4e7570a"
 version = "0.4.1"
 
 [[deps.FFMPEG_jll]]
-deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "JLLWrappers", "LAME_jll", "Libdl", "Ogg_jll", "OpenSSL_jll", "Opus_jll", "PCRE2_jll", "Pkg", "Zlib_jll", "libaom_jll", "libass_jll", "libfdk_aac_jll", "libvorbis_jll", "x264_jll", "x265_jll"]
-git-tree-sha1 = "74faea50c1d007c85837327f6775bea60b5492dd"
+deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "JLLWrappers", "LAME_jll", "Libdl", "Ogg_jll", "OpenSSL_jll", "Opus_jll", "PCRE2_jll", "Zlib_jll", "libaom_jll", "libass_jll", "libfdk_aac_jll", "libvorbis_jll", "x264_jll", "x265_jll"]
+git-tree-sha1 = "466d45dc38e15794ec7d5d63ec03d776a9aff36e"
 uuid = "b22a6f82-2f65-5046-a5b2-351ab43fb4e5"
-version = "4.4.2+2"
+version = "4.4.4+1"
 
 [[deps.FFTViews]]
 deps = ["CustomUnitRanges", "FFTW"]
@@ -702,9 +719,9 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FillArrays]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "Statistics"]
-git-tree-sha1 = "f0af9b12329a637e8fba7d6543f915fff6ba0090"
+git-tree-sha1 = "f372472e8672b1d993e93dada09e23139b509f9e"
 uuid = "1a297f60-69ca-5386-bcde-b61e274b549b"
-version = "1.4.2"
+version = "1.5.0"
 
 [[deps.FiniteDiff]]
 deps = ["ArrayInterface", "LinearAlgebra", "Requires", "Setfield", "SparseArrays"]
@@ -742,9 +759,9 @@ version = "0.4.2"
 
 [[deps.ForwardDiff]]
 deps = ["CommonSubexpressions", "DiffResults", "DiffRules", "LinearAlgebra", "LogExpFunctions", "NaNMath", "Preferences", "Printf", "Random", "SpecialFunctions"]
-git-tree-sha1 = "00e252f4d706b3d55a8863432e742bf5717b498d"
+git-tree-sha1 = "cf0fe81336da9fb90944683b8c41984b08793dad"
 uuid = "f6369f11-7733-5829-9624-2563aa707210"
-version = "0.10.35"
+version = "0.10.36"
 weakdeps = ["StaticArrays"]
 
     [deps.ForwardDiff.extensions]
@@ -822,9 +839,9 @@ version = "1.3.14+0"
 
 [[deps.GridLayoutBase]]
 deps = ["GeometryBasics", "InteractiveUtils", "Observables"]
-git-tree-sha1 = "678d136003ed5bceaab05cf64519e3f956ffa4ba"
+git-tree-sha1 = "f57a64794b336d4990d90f80b147474b869b1bc4"
 uuid = "3955a311-db13-416c-9275-1d80ed98e5e9"
-version = "0.9.1"
+version = "0.9.2"
 
 [[deps.Grisu]]
 git-tree-sha1 = "53bb909d1151e57e2484c3d1b53e19552b887fb2"
@@ -839,15 +856,15 @@ version = "2.8.1+1"
 
 [[deps.HostCPUFeatures]]
 deps = ["BitTwiddlingConvenienceFunctions", "IfElse", "Libdl", "Static"]
-git-tree-sha1 = "d38bd0d9759e3c6cfa19bdccc314eccf8ce596cc"
+git-tree-sha1 = "eb8fed28f4994600e29beef49744639d985a04b2"
 uuid = "3e5b6fbb-0976-4d2c-9146-d79de83f2fb0"
-version = "0.1.15"
+version = "0.1.16"
 
 [[deps.HypergeometricFunctions]]
 deps = ["DualNumbers", "LinearAlgebra", "OpenLibm_jll", "SpecialFunctions"]
-git-tree-sha1 = "83e95aaab9dc184a6dcd9c4c52aa0dc26cd14a1d"
+git-tree-sha1 = "f218fe3736ddf977e0e772bc9a586b2383da2685"
 uuid = "34004b35-14d8-5ef3-9330-4cdb6864b03a"
-version = "0.3.21"
+version = "0.3.23"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -937,9 +954,9 @@ version = "0.1.2"
 
 [[deps.IntelOpenMP_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "0cb9352ef2e01574eeebdb102948a58740dcaf83"
+git-tree-sha1 = "ad37c091f7d7daf900963171600d7c1c5c3ede32"
 uuid = "1d5cc7b8-4909-519e-a0f8-d0f5ad9712d0"
-version = "2023.1.0+0"
+version = "2023.2.0+0"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -958,10 +975,14 @@ uuid = "d1acc4aa-44c8-5952-acd4-ba5d80a2a253"
 version = "0.20.9"
 
 [[deps.IntervalSets]]
-deps = ["Dates", "Random", "Statistics"]
-git-tree-sha1 = "16c0cc91853084cb5f58a78bd209513900206ce6"
+deps = ["Dates", "Random"]
+git-tree-sha1 = "8e59ea773deee525c99a8018409f64f19fb719e6"
 uuid = "8197267c-284f-5f27-9208-e0e47529a953"
-version = "0.7.4"
+version = "0.7.7"
+weakdeps = ["Statistics"]
+
+    [deps.IntervalSets.extensions]
+    IntervalSetsStatisticsExt = "Statistics"
 
 [[deps.IrrationalConstants]]
 git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
@@ -985,10 +1006,10 @@ uuid = "82899510-4779-5014-852e-03e436cf321d"
 version = "1.0.0"
 
 [[deps.JLLWrappers]]
-deps = ["Preferences"]
-git-tree-sha1 = "abc9885a7ca2052a736a600f7fa66209f96506e1"
+deps = ["Artifacts", "Preferences"]
+git-tree-sha1 = "a7e91ef94114d5bc8952bcaa8d6ff952cf709808"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
-version = "1.4.1"
+version = "1.4.2"
 
 [[deps.JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
@@ -1010,9 +1031,9 @@ version = "2.1.91+0"
 
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "6a125e6a4cb391e0b9adbd1afa9e771c2179f8ef"
+git-tree-sha1 = "e8ab063deed72e14666f9d8af17bd5f9eab04392"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.9.23"
+version = "0.9.24"
 
 [[deps.KernelDensity]]
 deps = ["Distributions", "DocStringExtensions", "FFTW", "Interpolations", "StatsBase"]
@@ -1181,9 +1202,9 @@ version = "0.1.4"
 
 [[deps.MKL_jll]]
 deps = ["Artifacts", "IntelOpenMP_jll", "JLLWrappers", "LazyArtifacts", "Libdl", "Pkg"]
-git-tree-sha1 = "154d7aaa82d24db6d8f7e4ffcfe596f40bff214b"
+git-tree-sha1 = "eb006abbd7041c28e0d16260e50a24f8f9104913"
 uuid = "856f044c-d86e-5d09-b602-aeab76dc8ba7"
-version = "2023.1.0+0"
+version = "2023.2.0+0"
 
 [[deps.MacroTools]]
 deps = ["Markdown", "Random"]
@@ -1193,15 +1214,15 @@ version = "0.5.10"
 
 [[deps.Makie]]
 deps = ["Animations", "Base64", "ColorBrewer", "ColorSchemes", "ColorTypes", "Colors", "Contour", "DelaunayTriangulation", "Distributions", "DocStringExtensions", "Downloads", "FFMPEG", "FileIO", "FixedPointNumbers", "Formatting", "FreeType", "FreeTypeAbstraction", "GeometryBasics", "GridLayoutBase", "ImageIO", "InteractiveUtils", "IntervalSets", "Isoband", "KernelDensity", "LaTeXStrings", "LinearAlgebra", "MacroTools", "MakieCore", "Markdown", "Match", "MathTeXEngine", "Observables", "OffsetArrays", "Packing", "PlotUtils", "PolygonOps", "PrecompileTools", "Printf", "REPL", "Random", "RelocatableFolders", "Setfield", "ShaderAbstractions", "Showoff", "SignedDistanceFields", "SparseArrays", "StableHashTraits", "Statistics", "StatsBase", "StatsFuns", "StructArrays", "TriplotBase", "UnicodeFun"]
-git-tree-sha1 = "729640354756782c89adba8857085a69e19be7ab"
+git-tree-sha1 = "e81675589ba7199a82443e87fc52e17eeceac2e8"
 uuid = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
-version = "0.19.7"
+version = "0.19.8"
 
 [[deps.MakieCore]]
 deps = ["Observables"]
-git-tree-sha1 = "87a85ff81583bd392642869557cb633532989517"
+git-tree-sha1 = "f56b09c8b964919373d61750c6d8d4d2c602a2be"
 uuid = "20f20a25-4f0e-4fdf-b5d1-57303727442b"
-version = "0.6.4"
+version = "0.6.5"
 
 [[deps.ManualMemory]]
 git-tree-sha1 = "bcaef4fc7a0cfe2cba636d84cda54b5e4e4ca3cd"
@@ -1286,9 +1307,9 @@ version = "1.2.0"
 
 [[deps.Noise]]
 deps = ["ImageCore", "PoissonRandom", "Random"]
-git-tree-sha1 = "1427315f223bc7c754c1d97a12c2b5fc059dafbc"
+git-tree-sha1 = "d34a07459e1ebdc6b551ecb28e3c19993f544d91"
 uuid = "81d43f40-5267-43b7-ae1c-8b967f377efa"
-version = "0.3.2"
+version = "0.3.3"
 
 [[deps.Observables]]
 git-tree-sha1 = "6862738f9796b3edc1c09d0890afce4eca9e7e93"
@@ -1331,9 +1352,9 @@ version = "0.8.1+0"
 
 [[deps.OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "1aa4b74f80b01c6bc2b89992b861b5f210e665b5"
+git-tree-sha1 = "e78db7bd5c26fc5a6911b50a47ee302219157ea8"
 uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
-version = "1.1.21+0"
+version = "3.0.10+0"
 
 [[deps.OpenSpecFun_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Pkg"]
@@ -1343,9 +1364,9 @@ version = "0.5.5+0"
 
 [[deps.Optim]]
 deps = ["Compat", "FillArrays", "ForwardDiff", "LineSearches", "LinearAlgebra", "NLSolversBase", "NaNMath", "Parameters", "PositiveFactorizations", "Printf", "SparseArrays", "StatsBase"]
-git-tree-sha1 = "e3a6546c1577bfd701771b477b794a52949e7594"
+git-tree-sha1 = "963b004d15216f8129f6c0f7d187efa136570be0"
 uuid = "429524aa-4258-5aef-a3af-852621145aeb"
-version = "1.7.6"
+version = "1.7.7"
 
 [[deps.Opus_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1401,9 +1422,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
-git-tree-sha1 = "4b2e829ee66d4218e0cef22c0a64ee37cf258c29"
+git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.7.1"
+version = "2.7.2"
 
 [[deps.Permutations]]
 deps = ["Combinatorics", "LinearAlgebra", "Random"]
@@ -1598,12 +1619,6 @@ version = "0.2.1"
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 version = "0.7.0"
 
-[[deps.SIMD]]
-deps = ["PrecompileTools"]
-git-tree-sha1 = "0e270732477b9e551d884e6b07e23bb2ec947790"
-uuid = "fdea26ae-647d-5447-a871-4b548cad5224"
-version = "3.4.5"
-
 [[deps.SIMDTypes]]
 git-tree-sha1 = "330289636fb8107c5f32088d2741e9fd7a061a5c"
 uuid = "94e857df-77ce-4151-89e5-788b33177be4"
@@ -1614,12 +1629,6 @@ deps = ["IfElse", "Static", "VectorizationBase"]
 git-tree-sha1 = "4b8586aece42bee682399c4c4aee95446aa5cd19"
 uuid = "476501e8-09a2-5ece-8869-fb82de89a1fa"
 version = "0.6.39"
-
-[[deps.ScanByte]]
-deps = ["Libdl", "SIMD"]
-git-tree-sha1 = "d49e35f413186528f1d7cc675e67d0ed16fd7800"
-uuid = "7b38b023-a4d7-4c5e-8d43-3f3097f304eb"
-version = "0.4.0"
 
 [[deps.Scratch]]
 deps = ["Dates"]
@@ -1677,9 +1686,9 @@ version = "0.3.0"
 
 [[deps.SimplePolynomials]]
 deps = ["Mods", "Multisets", "Polynomials", "Primes"]
-git-tree-sha1 = "d073c45302132b324ca653e1053966b4beacc2a5"
+git-tree-sha1 = "9f1b1f47279018b35316c62e829af1f3f6725a47"
 uuid = "cc47b68c-3164-5771-a705-2bc0097375a0"
-version = "0.2.11"
+version = "0.2.13"
 
 [[deps.SimpleRandom]]
 deps = ["Distributions", "LinearAlgebra", "Random"]
@@ -1720,9 +1729,9 @@ uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.SpecialFunctions]]
 deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
-git-tree-sha1 = "7beb031cf8145577fbccacd94b8a8f4ce78428d3"
+git-tree-sha1 = "e2cfc4012a19088254b3950b85c3c1d8882d864d"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
-version = "2.3.0"
+version = "2.3.1"
 weakdeps = ["ChainRulesCore"]
 
     [deps.SpecialFunctions.extensions]
@@ -1863,10 +1872,10 @@ uuid = "731e570b-9d59-4bfa-96dc-6df516fadf69"
 version = "0.6.4"
 
 [[deps.TiledIteration]]
-deps = ["OffsetArrays"]
-git-tree-sha1 = "5683455224ba92ef59db72d10690690f4a8dc297"
+deps = ["OffsetArrays", "StaticArrayInterface"]
+git-tree-sha1 = "1176cc31e867217b06928e2f140c90bd1bc88283"
 uuid = "06e1c1a7-607b-532d-9fad-de7d9aa2abac"
-version = "0.3.1"
+version = "0.5.0"
 
 [[deps.TranscodingStreams]]
 deps = ["Random", "Test"]
@@ -1890,9 +1899,9 @@ uuid = "9d95972d-f1c8-5527-a6e0-b4b365fa01f6"
 version = "1.3.0"
 
 [[deps.URIs]]
-git-tree-sha1 = "074f993b0ca030848b897beff716d93aca60f06a"
+git-tree-sha1 = "b7a5e99f24892b6824a954199a45e9ffcc1c70f0"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.4.2"
+version = "1.5.0"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -1914,9 +1923,9 @@ version = "0.4.1"
 
 [[deps.Unitful]]
 deps = ["Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "c4d2a349259c8eba66a00a540d550f122a3ab228"
+git-tree-sha1 = "607c142139151faa591b5e80d8055a15e487095b"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.15.0"
+version = "1.16.3"
 
     [deps.Unitful.extensions]
     ConstructionBaseUnitfulExt = "ConstructionBase"
@@ -2074,34 +2083,35 @@ version = "3.5.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─41898031-4baa-47a8-95ae-bb42b5483193
-# ╟─e0ee3cd9-f889-48de-99d8-dd1ac0ad4dc2
-# ╟─460845fa-8f82-4ad5-8c4f-c11f65385d32
-# ╠═22b2617f-9fed-47c7-891b-6c1983fdbda5
-# ╠═357faaad-e1af-436a-b4e1-91108e605460
-# ╟─5a487664-b67b-460b-bd1a-df0890b8a603
-# ╠═631951da-4b80-45d7-8501-657586856809
-# ╠═2d551c0f-fb2d-4966-9794-ca7268328577
-# ╟─9ce49797-89b6-4667-b755-84e5d768d2af
-# ╟─ffb5817d-402a-462e-ab0c-628b56227ce9
-# ╟─62762569-92e5-472d-8cb9-c4850cba32a2
-# ╠═eff4e2bd-c234-457c-aa6e-d517fbc66757
-# ╟─bb4127c3-6b1d-4fb7-8a5d-73b218a01a61
-# ╠═e348a08d-2657-4338-a793-0f7b00a0a5ab
-# ╠═96f41255-b4f8-4c3f-81a1-26e2b0f75892
-# ╠═8e85a09d-b090-4810-8f5b-4088bf9868b2
-# ╟─505586bc-263d-4971-9f0e-c85ead21c39c
-# ╟─b32df155-0949-4fb4-aed8-6100ca188a44
-# ╠═3348d809-9c0d-482d-828f-38350aa58a04
-# ╟─52205889-701b-4517-9871-abb284c2c945
-# ╠═68e81095-0019-4e41-b0d3-bfb756ad17f2
-# ╠═49663648-ab63-45cc-9035-cde2c67256f2
-# ╠═c63962ae-f4de-4a13-a961-aed8fec68fd1
-# ╠═90cab5f5-81d9-4150-9792-a33b43ccd26f
-# ╠═e2e8f1a2-8f7e-4a69-9ec0-a86813d255b9
-# ╠═5e13fe97-a3d4-4932-81e5-2cd912734d4a
-# ╟─25506eb9-a45e-4d70-aef8-5028fba3af18
-# ╟─6cbca72a-6c0f-4a86-9046-c888522737e1
-# ╟─17a5a766-2795-4b4b-b553-84c0d3d1ca6e
+# ╟─24de8bc6-e495-49d4-a1b2-673f714bdf9f
+# ╟─1e656925-3b85-498d-b141-2066de514aed
+# ╟─aa529c31-0503-46c9-a027-b911797a7306
+# ╟─3c866da2-8263-4d4b-93f8-f178d243130d
+# ╠═584c39b6-e3c6-426f-a917-f415b54947c3
+# ╠═9ee13ae7-71b0-447b-8ce3-60e9649439a9
+# ╟─5ddaf3d2-7dd6-49ac-934d-cb7bdfd37a43
+# ╠═422bc5a6-665b-44de-bd8d-b3a18e0497e5
+# ╠═aee04655-a30d-430d-a732-b3897938d740
+# ╟─f5c7fb00-ee43-44bf-84de-e270f77a0930
+# ╟─58760da5-0b94-4c01-9024-a46fe2e7832a
+# ╟─6616ca9c-5de2-4615-8707-8b7138b9f2e7
+# ╠═46b33f08-05b9-4c26-a9e4-49b0d1dbd0b3
+# ╟─db66f0c7-4256-4ffa-9cd3-90766e08381d
+# ╠═98b7ed8c-97d8-4966-a65a-27aabf51ec55
+# ╠═dbe72760-be53-4f72-a8ef-6b46d7a0b824
+# ╠═611a3d4e-18ec-45db-998c-be40e7f59cff
+# ╟─8d883827-995a-433d-9143-03b2326c0610
+# ╠═161b9ba5-013e-4d7f-86b8-c3aaa53d3206
+# ╠═5b8e3935-3dc5-4f7b-b83e-6192f1e285cb
+# ╟─aeb4d61b-c091-47f5-8ed5-bddee40960d2
+# ╠═495e2521-543c-47b9-b5fb-38b3162d3c26
+# ╠═1525560b-1ef9-4c9f-b557-0d8f3f37d0cd
+# ╠═0f63ae63-d8cd-4b38-99d0-e53d0d68ea11
+# ╠═dcee2b99-1b32-4945-bd4b-5ad5c07cd8b5
+# ╠═07eccab2-6f71-4eaf-b98a-00bc5eaea693
+# ╠═0231b3f4-8e2b-4f68-be5f-553714069082
+# ╟─3f05439b-afdb-43dc-9246-7c00cdedffb3
+# ╟─48d50aa7-cdf6-48d4-97f5-ed9713d3b325
+# ╟─ba707bc7-6b36-4131-97ad-ea757d17d646
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
