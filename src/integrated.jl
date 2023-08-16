@@ -33,22 +33,20 @@ function Integrated(
 end
 
 """
-    score(vol, S_Bkg, S_Obj, algorithm::Integrated)
-    score(vol, S_Bkg, S_Obj, size, algorithm::Integrated)
-    score(vol, S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
+    score(S_Bkg, S_Obj, algorithm::Integrated)
+    score(S_Bkg, S_Obj, size, algorithm::Integrated)
+    score(S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
 
-Given a volume `vol` of interest, use the integrated intensity
-approach to find the total number of object voxels/volume/mass 
-contained in `vol`.
+Use the integrated intensity approach to find the total number of object
+voxels/volume/mass contained in `vol`.
 
 The function can be called with different parameters:
 
-1. `vol`, `S_Bkg`, `S_Obj`, `algorithm` - Returns the total number of object voxels.
-2. `vol`, `S_Bkg`, `S_Obj`, `size`, `algorithm` - Returns the total object volume.
-3. `vol`, `S_Bkg`, `S_Obj`, `size`, `ρ`, `algorithm` - Returns the total object mass.
+1. `S_Bkg`, `S_Obj`, `algorithm` - Returns the total number of object voxels.
+2. `S_Bkg`, `S_Obj`, `size`, `algorithm` - Returns the total object volume.
+3. ``S_Bkg`, `S_Obj`, `size`, `ρ`, `algorithm` - Returns the total object mass.
 
 ## Inputs
-- `vol`: region of interest
 - `S_Bkg`: pure background signal intensity in the `vol`
 - `S_Obj`: pure object signal intensity in the `vol`
 - `size`: (optional) size of the voxels in the given `vol` (only for the 2nd and 3rd variations)
