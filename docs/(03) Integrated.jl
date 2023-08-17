@@ -60,7 +60,7 @@ html"""
 # ╔═╡ 6b54bcdd-2db0-4b75-acd9-1f1262d2f779
 md"""
 !!! success "Overview"
-	[Previously](docs/(02) Volume Fraction.jl), we showcased the Volume Fraction Calcium Mass method. This notebook will examine how to use the Integrated Calium Mass method. To understand the theory behind this technique, please see [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
+	[Previously]((02) Volume Fraction.jl), we showcased the Volume Fraction Calcium Mass method. This notebook will examine how to use the Integrated Calium Mass method. To understand the theory behind this technique, please see [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
 """
 
 # ╔═╡ a1ae748b-fdf1-4a3d-b4c8-9acc23601e4b
@@ -75,7 +75,7 @@ TableOfContents()
 # ╔═╡ 1ba711ae-8779-4437-b211-203e5ae7a3b4
 md"""
 !!! info "Create Simulated Images"
-	Let's quickly rectreate the simulated images from the [previous tutorial](docs/(02) Volume Fraction.jl).
+	Let's quickly recreate the simulated images from the [previous tutorial]((02) Volume Fraction.jl).
 """
 
 # ╔═╡ 5a3e5de5-d1a4-4c90-8de6-e2e1cdf61f71
@@ -318,7 +318,7 @@ md"""
 # ╔═╡ 7e965e51-494c-4796-b06b-f301b02538fb
 md"""
 # Next Steps
-We just demonstrated how `score()` can be used with the `Integrated()` algorithm. Let's now look at the last algorithm [Spatially Weighted Calcium Scoring](docs/(04) Spatially Weighted.jl).
+We just demonstrated how `score()` can be used with the `Integrated()` algorithm. Let's now look at the last algorithm [Spatially Weighted Calcium Scoring]((04) Spatially Weighted.jl).
 """
 
 # ╔═╡ Cell order:

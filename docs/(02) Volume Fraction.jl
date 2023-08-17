@@ -60,7 +60,7 @@ html"""
 # ╔═╡ cce7e28d-98ed-473b-8a15-add461821b60
 md"""
 !!! success "Overview"
-	[Previously](docs/(01) Agatston Scoring.jl), we showcased the Agatston scoring method. This notebook will examine how to use the Volume Fraction Calium Mass method. To understand the theory behind this technique, please see [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
+	[Previously]((01) Agatston Scoring.jl), we showcased the Agatston scoring method. This notebook will examine how to use the Volume Fraction Calium Mass method. To understand the theory behind this technique, please see [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
 """
 
 # ╔═╡ d77638af-8af0-435c-b81b-734ad859cd67
@@ -75,7 +75,7 @@ TableOfContents()
 # ╔═╡ 2c8e78b9-b8fb-42e7-a577-bbc636ff571f
 md"""
 !!! info "Create Simulated Images"
-	Let's quickly rectreate the simulated images from the [previous tutorial](docs/(01) Agatston Scoring.jl).
+	Let's quickly recreate the simulated images from the [previous tutorial]((01) Agatston Scoring.jl).
 """
 
 # ╔═╡ 081220be-1d71-48e2-8f4f-d89cfe6d2ba2
@@ -220,7 +220,7 @@ md"""
 # ╔═╡ ba100057-22e8-45be-a2d7-71d43a921928
 md"""
 # Next Steps
-We demonstrated how `score()` can be used with the `VolumeFraction()` algorithm. This is the most well-tested calcium scoring algorithm in the library, but check out the [Integrated Calcium Mass](docs/(03) Integrated.jl) tutorial to see how to implement another approach.
+We demonstrated how `score()` can be used with the `VolumeFraction()` algorithm. This is the most well-tested calcium scoring algorithm in the library, but check out the [Integrated Calcium Mass]((03) Integrated.jl) tutorial to see how to implement another approach.
 """
 
 # ╔═╡ Cell order:
