@@ -70,7 +70,7 @@ html"""
 # ╔═╡ aa529c31-0503-46c9-a027-b911797a7306
 md"""
 !!! success "Overview"
-	[Previously]((01) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
+	[Previously]((00) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
 """
 
 # ╔═╡ 3c866da2-8263-4d4b-93f8-f178d243130d
