@@ -60,7 +60,7 @@ html"""
 # ╔═╡ ac4cfdee-4564-4232-b5b9-5129e077467f
 md"""
 !!! success "Overview"
-	[Previously](/docs/(03) Integrated.jl), we showcased the Integrated Calcium Mass method. This notebook will examine how to use the Spatially Weighted Calcium Scoring method. This method attempts to calculate scores equivalent to the Agatston method without thresholding.
+	[Previously](docs/(03) Integrated.jl), we showcased the Integrated Calcium Mass method. This notebook will examine how to use the Spatially Weighted Calcium Scoring method. This method attempts to calculate scores equivalent to the Agatston method without thresholding.
 """
 
 # ╔═╡ 56f4299d-630c-48bd-b124-31fc81718a45
@@ -75,7 +75,7 @@ TableOfContents()
 # ╔═╡ f49dd3ea-c6f8-409a-9897-71c7a4bb33cc
 md"""
 !!! info "Create Simulated Images"
-	Let's quickly rectreate the simulated images from the [previous tutorial](/docs/(03) Integrated.jl).
+	Let's quickly rectreate the simulated images from the [previous tutorial](docs/(03) Integrated.jl).
 """
 
 # ╔═╡ 38083227-3246-45c0-93f8-235f59241c2b
@@ -183,7 +183,7 @@ swcs = score(artery_img, μ, σ, SpatiallyWeighted())
 # ╔═╡ 70a448fa-909e-4131-a87a-3c0c47bbf046
 md"""
 !!! info 
-	If we remember from the [Agatston Scoring]((01) Agatston Scoring.jl) we see that the Agatston score was `77`, which correlated to a mass score of `204` mg. This greatly underestimated the ground truth mass of `376.91` mg. Spatially weighted calcium scoring cannot be used to calculate mass directly, but the spatially weighted calcium score of 393 is much higher than the corresponding Agatston score. This shows the benefit of the spatially weighted approach when dealing with low-density calcifications compared to the Agatston scoring approach. However, it seems like both volume fraction and integrated methods are more robust.
+	If we remember from the [Agatston Scoring](docs/(01) Agatston Scoring.jl) we see that the Agatston score was `77`, which correlated to a mass score of `204` mg. This greatly underestimated the ground truth mass of `376.91` mg. Spatially weighted calcium scoring cannot be used to calculate mass directly, but the spatially weighted calcium score of 393 is much higher than the corresponding Agatston score. This shows the benefit of the spatially weighted approach when dealing with low-density calcifications compared to the Agatston scoring approach. However, it seems like both volume fraction and integrated methods are more robust.
 """
 
 # ╔═╡ Cell order:

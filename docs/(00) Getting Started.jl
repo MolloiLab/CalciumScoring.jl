@@ -13,9 +13,6 @@ begin
 	using PlutoUI
 end
 
-# ╔═╡ 92d11a7d-0cc9-42bb-80d9-226b61a3949b
-TableOfContents()
-
 # ╔═╡ e0ee3cd9-f889-48de-99d8-dd1ac0ad4dc2
 md"""
 ## Overview
@@ -130,8 +127,11 @@ md"""
 
 The core function, `score()`, implements all four types of CAC quantification methods. Agatston scoring is the traditional method, but recent advances in the field of medical physics have introduced better approaches to coronary artery calcium mass quantification. We will explore these as we go. 
 
-Check out the [Agatston scoring](/docs/(01) Agatston Scoring.jl) tutorial to see how to implement the traditional approach.
+Check out the [Agatston scoring](docs/(01) Agatston Scoring.jl) tutorial to see how to implement the traditional approach.
 """
+
+# ╔═╡ 92d11a7d-0cc9-42bb-80d9-226b61a3949b
+TableOfContents()
 
 # ╔═╡ Cell order:
 # ╟─e0ee3cd9-f889-48de-99d8-dd1ac0ad4dc2

@@ -70,7 +70,7 @@ html"""
 # ╔═╡ aa529c31-0503-46c9-a027-b911797a7306
 md"""
 !!! success "Overview"
-	[Previously](/docs/(01) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
+	[Previously](docs/(01) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
 """
 
 # ╔═╡ 3c866da2-8263-4d4b-93f8-f178d243130d
@@ -252,7 +252,7 @@ md"""
 # ╔═╡ ba707bc7-6b36-4131-97ad-ea757d17d646
 md"""
 # Next Steps
-We just demonstrated how `score()` can be used with the `Agatston()` algorithm. This is the traditional calcium scoring algorithm. Check out the [Volume Fraction Calcium Mass](/docs/(02) Volume Fraction.jl) tutorial to see how to implement a more recent approach with various benefits.
+We just demonstrated how `score()` can be used with the `Agatston()` algorithm. This is the traditional calcium scoring algorithm. Check out the [Volume Fraction Calcium Mass](docs/(02) Volume Fraction.jl) tutorial to see how to implement a more recent approach with various benefits.
 """
 
 # ╔═╡ Cell order:
