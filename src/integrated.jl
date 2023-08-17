@@ -2,7 +2,7 @@ using Revise
 using CalciumScoring
 
 """
-# Integrated
+## Integrated
 
 ```julia
 function Integrated(
@@ -37,7 +37,7 @@ function Integrated(
 end
 
 """
-# Score (Integrated)
+## Score (Integrated)
 
 ```julia
 score(S_Bkg, S_Obj, algorithm::Integrated)

@@ -4,7 +4,7 @@ using Unitful: mm, mg, ustrip, Quantity
 using ImageMorphology: label_components
 
 """
-# Calcium Score
+## Calcium Score
 
 ```julia
 abstract type CalciumScore end
@@ -15,7 +15,7 @@ Main type for all calcium scoring algorithms in this package
 abstract type CalciumScore end
 
 """
-# _weight_thresholds
+## _weight_thresholds
    
 ```julia
 _weight_thresholds(kV, max_intensity)
@@ -115,7 +115,7 @@ function _weight_thresholds(kV, max_intensity)
 end
 
 """
-# Agatston
+## Agatston
 
 ```julia
 struct Agatston <: CalciumScore end
@@ -127,7 +127,7 @@ the calcium score should be Agatston's algorithm
 struct Agatston <: CalciumScore end
 
 """
-# Score (Agatston)
+## Score (Agatston)
 
 ```julia
 score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)

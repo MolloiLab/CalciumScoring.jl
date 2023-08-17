@@ -2,7 +2,7 @@ using Revise
 using CalciumScoring
 
 """
-# VolumeFraction
+## VolumeFraction
 
 ```julia
 struct VolumeFraction <: CalciumScore end
@@ -15,7 +15,7 @@ struct VolumeFraction <: CalciumScore end
 
 
 """
-# _percentage_calcium
+## _percentage_calcium
     
 ```julia
 _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
@@ -30,7 +30,7 @@ function _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
 end
 
 """
-# Score (Volume Fraction)
+## Score (Volume Fraction)
 
 ```julia
 score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
@@ -60,7 +60,7 @@ depending on the provided arguments.
 - When called with `vol`, `hu_calcium`, `hu_heart_tissue`, `voxel_size`, `density_calcium`, and `alg`, this 
     function calculates and returns the mass of the calcification.
 
-## Reference
+#### References
 [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1101/2023.01.12.23284482)
 """
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)

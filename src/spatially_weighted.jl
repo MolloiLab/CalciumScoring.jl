@@ -2,7 +2,7 @@ using Revise
 using CalciumScoring
 
 """
-# SpatiallyWeighted
+## SpatiallyWeighted
     
 ```julia
 struct SpatiallyWeighted <: CalciumScore end
@@ -14,7 +14,7 @@ the calcium score should be the Spatially Weighted Calcium Scoring algorithm.
 struct SpatiallyWeighted <: CalciumScore end
 
 """
-# Score (Spatially Weighted)
+## Score (Spatially Weighted)
 ```julia
 score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
 score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
