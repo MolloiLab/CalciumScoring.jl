@@ -2,7 +2,11 @@ using Revise
 using CalciumScoring
 
 """
-    struct SpatiallyWeighted <: CalciumScore end
+# SpatiallyWeighted
+    
+```julia
+struct SpatiallyWeighted <: CalciumScore end
+```
 
 Lets Julia know (via multiple dispatch) that the algorithm of choice when calculating 
 the calcium score should be the Spatially Weighted Calcium Scoring algorithm.
@@ -10,10 +14,13 @@ the calcium score should be the Spatially Weighted Calcium Scoring algorithm.
 struct SpatiallyWeighted <: CalciumScore end
 
 """
-    score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
-    score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
-    score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
-    score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
+# Score (Spatially Weighted)
+```julia
+score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
+score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
+score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
+score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
+```
 
 Calculate the calcium score via the Spatially Weighted Calcium Scoring algorithm. This method 
 avoids thresholding by weighting each voxel based on a previous calibration (usually 100 mg/cc)
@@ -29,18 +36,18 @@ The function can be called with different parameters:
 4. `vol::AbstractArray`, `μ`, `σ`, `alg::SpatiallyWeighted` - Applies the algorithm to a 3D volume with given 
     mean `μ` and standard deviation `σ`.
 
-## Inputs
+#### Inputs
 - `vol`: input volume containing just the region of interest. This can be a 2D (`AbstractMatrix`) or 
     3D (`AbstractArray`) volume.
 - `calibration`: a previous calibration for weighting each voxel.
 - `μ`, `σ`: given mean and standard deviation.
 - `alg::SpatiallyWeighted`: Spatially Weighted scoring algorithm `SpatiallyWeighted()`.
 
-## Returns
+#### Returns
 - `sw_score`: total Spatially Weighted score, providing a continuous and improved measure of atherosclerosis
     compared to existing coronary artery calcium scoring methods.
 
-## References
+#### References
 [An alternative method for quantifying coronary artery calcification: the multi-ethnic study of atherosclerosis (MESA)](https://doi.org/10.1186/1471-2342-12-14)
 
 [Spatially Weighted Coronary Artery Calcium Score and Coronary Heart Disease Events in the Multi-Ethnic Study of Atherosclerosis](https://doi.org/10.1161/CIRCIMAGING.120.011981)

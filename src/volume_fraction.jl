@@ -2,7 +2,12 @@ using Revise
 using CalciumScoring
 
 """
-    struct VolumeFraction <: CalciumScore end
+# VolumeFraction
+
+```julia
+struct VolumeFraction <: CalciumScore end
+```
+
 Lets Julia know (via multiple dispatch) that the algorithm of choice when calculating the 
 calcium score should be the volume fraction algorithm
 """
@@ -10,7 +15,11 @@ struct VolumeFraction <: CalciumScore end
 
 
 """
-    _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
+# _percentage_calcium
+    
+```julia
+_percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
+```
 
 Find the percentage of calcium within one voxel given the voxel intensity `voxel_intensity`, 
 the Hounsfield unit associated with a known calcium density `hu_calcium`, and the Hounsfield 
@@ -21,12 +30,16 @@ function _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
 end
 
 """
-    score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-    score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-    score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
-    score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-    score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-    score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
+# Score (Volume Fraction)
+
+```julia
+score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
+score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
+score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
+score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
+score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
+score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
+```
 
 Calculate the number of voxels that are calcified, the volume of the calcification, or the mass of the calcification 
 depending on the provided arguments.
