@@ -65,6 +65,9 @@ all_names = [name for name in names(CalciumScoring)]
 # ╔═╡ 5f465635-4f44-4509-80ca-0742b65bd810
 exported_functions = filter(x -> x != :CalciumScoring, all_names)
 
+# ╔═╡ b06e7303-7c79-4edf-93dc-113bb1416a7f
+
+
 # ╔═╡ d69659cc-0cd9-40f8-8902-55ed87c0d322
 function generate_docs(exported_functions)
     PlutoUI.combine() do Child
@@ -86,4 +89,5 @@ generate_docs(exported_functions)
 # ╠═26d2e031-7a40-424b-8196-afb675cdf157
 # ╠═3e0d2872-7d4d-449b-816e-85859b7159d2
 # ╠═5f465635-4f44-4509-80ca-0742b65bd810
+# ╠═b06e7303-7c79-4edf-93dc-113bb1416a7f
 # ╠═d69659cc-0cd9-40f8-8902-55ed87c0d322

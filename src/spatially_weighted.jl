@@ -53,7 +53,6 @@ The function can be called with different parameters:
 
 [Spatially Weighted Coronary Artery Calcium Score and Coronary Heart Disease Events in the Multi-Ethnic Study of Atherosclerosis](https://doi.org/10.1161/CIRCIMAGING.120.011981)
 """
-
 function score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
     μ, σ = mean(calibration), std(calibration)
     d = Distributions.Normal(μ, σ)
