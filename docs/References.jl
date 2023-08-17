@@ -10,10 +10,9 @@ begin
 	using Pkg; Pkg.activate(temp = true)
 	Pkg.add("PlutoUI")
 	Pkg.add(url = "https://github.com/Dale-Black/CalciumScoring.jl")
-end;
 
-# ╔═╡ 7b6f1503-8be9-499e-b277-2364b79c9473
-using PlutoUI, CalciumScoring
+	using PlutoUI, CalciumScoring
+end;
 
 # ╔═╡ ce457dad-300c-430b-9fb3-b2f0048d99f3
 TableOfContents()
@@ -55,11 +54,16 @@ html"""
 </html>
 """
 
+# ╔═╡ fbc3ffb1-414f-472b-a04d-f98d43d49a1c
+md"""
+# References
+"""
+
 # ╔═╡ 3e0d2872-7d4d-449b-816e-85859b7159d2
-all_functions = [name for name in names(CalciumScoring)]
+all_names = [name for name in names(CalciumScoring)]
 
 # ╔═╡ 5f465635-4f44-4509-80ca-0742b65bd810
-exported_functions = filter(x -> x != :MaterialDecomposition && x != :fit_calibration && x != :CalciumScoring, all_functions)
+exported_functions = filter(x -> x != :CalciumScoring, all_names)
 
 # ╔═╡ d69659cc-0cd9-40f8-8902-55ed87c0d322
 function generate_docs(exported_functions)
@@ -75,11 +79,11 @@ generate_docs(exported_functions)
 
 # ╔═╡ Cell order:
 # ╠═4430a6d2-6e99-416a-8afa-27c3c049dc08
-# ╠═7b6f1503-8be9-499e-b277-2364b79c9473
 # ╠═ce457dad-300c-430b-9fb3-b2f0048d99f3
 # ╟─4ba7105a-4d49-447c-b053-3c265ec38139
 # ╟─70da4548-6a59-4b6b-8885-0dbab4dbffb4
+# ╟─fbc3ffb1-414f-472b-a04d-f98d43d49a1c
+# ╠═26d2e031-7a40-424b-8196-afb675cdf157
 # ╠═3e0d2872-7d4d-449b-816e-85859b7159d2
 # ╠═5f465635-4f44-4509-80ca-0742b65bd810
 # ╠═d69659cc-0cd9-40f8-8902-55ed87c0d322
-# ╠═26d2e031-7a40-424b-8196-afb675cdf157
