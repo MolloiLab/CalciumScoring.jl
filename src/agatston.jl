@@ -131,9 +131,12 @@ struct Agatston <: CalciumScore end
 
 ```julia
 score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
-score(vol, spacing::Array{T}, alg::Agatston; kV=120, min_size_mm=1) where {T<:Unitful.Quantity}
+
+score(vol, spacing::Array{T}, alg::Agatston; kV=120, min_size_mm=1)
+
 score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
-score(vol, spacing::Array{T}, mass_cal_factor::Unitful.Quantity, alg::Agatston; kV=120, min_size_mm=1) where {T<:Unitful.Quantity}
+
+score(vol, spacing::Array{T}, mass_cal_factor::Unitful.Quantity, alg::Agatston; kV=120, min_size_mm=1)
 ```
 Calculate the calcium score via the traditional Agatston scoring technique, as outlined in the 
 [original paper](10.1016/0735-1097(90)90282-T). Energy (`kV`) specific `threshold`s are determined based on 

@@ -18,8 +18,11 @@ struct SpatiallyWeighted <: CalciumScore end
 
 ```julia
 score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
+
 score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
+
 score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
+
 score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
 ```
 

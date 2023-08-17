@@ -41,7 +41,9 @@ end
 
 ```julia
 score(S_Bkg, S_Obj, algorithm::Integrated)
+
 score(S_Bkg, S_Obj, size, algorithm::Integrated)
+
 score(S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
 ```
 

@@ -34,10 +34,15 @@ end
 
 ```julia
 score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
+
 score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
+
 score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
+
 score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
+
 score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
+
 score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
 ```
 
