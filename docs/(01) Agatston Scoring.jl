@@ -64,7 +64,7 @@ html"""
 # ╔═╡ aa529c31-0503-46c9-a027-b911797a7306
 md"""
 !!! success "Overview"
-	[Previously](/(01) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
+	[Previously](/docs/(01) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
 """
 
 # ╔═╡ 3c866da2-8263-4d4b-93f8-f178d243130d
@@ -159,7 +159,7 @@ end
 # ╔═╡ 6616ca9c-5de2-4615-8707-8b7138b9f2e7
 md"""
 !!! success "Calculate Ground Truth Calcium Mass"
-	If assume that the calcium in the coronary artery (slices 1-3) has a density of ``0.1 \frac{mg}{mm^3}``, we can then calculate the mass of this calcium within the entire 3D image. We first assume the voxels are of size ``1mm \times 1mm \times 1 mm`` and calculate the volume of the calcium.
+	If assume that the calcium in the coronary artery (slices 1-3) has a density of ``0.1 \frac{mg}{mm^3}``, we can then calculate the mass of this calcium within the entire 3D image. We first assume the voxels are of size ``1 \ mm \times 1 \ mm \times 1 \ mm`` and calculate the volume of the calcium.
 	
 	```math
 	\begin{align*}
@@ -227,11 +227,11 @@ _, _, mass_score = score(artery_img, spacing, mass_cal_factor, Agatston())
 # ╔═╡ 3f05439b-afdb-43dc-9246-7c00cdedffb3
 md"""
 !!! info "Agatston Scoring Limitations"
-	We can see that mass score returns a value of about ``194.1 mg``. Compare this to the true mass of ``376.91 mg`` and we see that the mass was underestimated by almost half. This is not a suprise and this is one of the limitations of Agatston scoring. The Agatston scoring approach applies an arbitary threshold to the input array, and any voxel with an intensity below ``130`` (Hounsfield Units, HU) is removed from the calculation.
+	We can see that the mass score returns a value of about `204.01` mg. Compare this to the true mass of `376.91` mg and we see that the mass was underestimated by almost half. This is not a surprise and this is one of the limitations of Agatston scoring. The Agatston scoring approach applies an arbitrary threshold to the input array, and any voxel with an intensity below ``130`` (Hounsfield Units, HU) is removed from the calculation.
 
-	The simulated calcium image we created set the voxels to an intensity of exactly 130 HU. After noise was added, a number of those voxels were then below the 130 HU threshold and therefore not included in the Agatston scoring calculation.
+	The simulated calcium image we created set the voxels to an intensity of exactly 130 HU. After noise was added, a number of those voxels were then below the 130 HU threshold and, therefore not included in the Agatston scoring calculation.
 
-	This is one of the main limitations of Agatston scoring and some of the motivation behind the recent calcium scoring approaches.
+	This is one of the main limitations of Agatston scoring and some of the motivations behind the recent calcium scoring approaches.
 """
 
 # ╔═╡ 48d50aa7-cdf6-48d4-97f5-ed9713d3b325
@@ -246,7 +246,7 @@ md"""
 # ╔═╡ ba707bc7-6b36-4131-97ad-ea757d17d646
 md"""
 # Next Steps
-We just demonstrated how `score()` can be used with the `Agatston()` algorithm. This is the traditional calcium scoring algorithm. Check out the [Volume Fraction Calcium Mass]((02) Volume Fraction.jl) tutorial to see how to implement a more recent approach with various benefits.
+We just demonstrated how `score()` can be used with the `Agatston()` algorithm. This is the traditional calcium scoring algorithm. Check out the [Volume Fraction Calcium Mass](/docs/(02) Volume Fraction.jl) tutorial to see how to implement a more recent approach with various benefits.
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001

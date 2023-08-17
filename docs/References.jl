@@ -6,11 +6,11 @@ using InteractiveUtils
 
 # ╔═╡ 4430a6d2-6e99-416a-8afa-27c3c049dc08
 # ╠═╡ show_logs = false
-using Pkg; Pkg.activate(temp = true)
-
-# ╔═╡ 5a2bf002-9d69-4235-9291-3b321baddfc6
-# ╠═╡ show_logs = false
-Pkg.add("PlutoUI"), Pkg.add(url = "https://github.com/Dale-Black/CalciumScoring.jl")
+begin
+	using Pkg; Pkg.activate(temp = true)
+	Pkg.add("PlutoUI")
+	Pkg.add(url = "https://github.com/Dale-Black/CalciumScoring.jl")
+end;
 
 # ╔═╡ 7b6f1503-8be9-499e-b277-2364b79c9473
 using PlutoUI, CalciumScoring
@@ -75,7 +75,6 @@ generate_docs(exported_functions)
 
 # ╔═╡ Cell order:
 # ╠═4430a6d2-6e99-416a-8afa-27c3c049dc08
-# ╠═5a2bf002-9d69-4235-9291-3b321baddfc6
 # ╠═7b6f1503-8be9-499e-b277-2364b79c9473
 # ╠═ce457dad-300c-430b-9fb3-b2f0048d99f3
 # ╟─4ba7105a-4d49-447c-b053-3c265ec38139
