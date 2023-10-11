@@ -2,7 +2,7 @@ using Revise
 using CalciumScoring
 
 """
-## VolumeFraction
+## `VolumeFraction`
 
 ```julia
 struct VolumeFraction <: CalciumScore end
@@ -15,7 +15,7 @@ struct VolumeFraction <: CalciumScore end
 
 
 """
-## _percentage_calcium
+## `_percentage_calcium`
     
 ```julia
 _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
@@ -30,7 +30,7 @@ function _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
 end
 
 """
-## Score (Volume Fraction)
+## `score` (VolumeFraction)
 
 ```julia
 score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
