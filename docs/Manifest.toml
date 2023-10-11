@@ -161,7 +161,9 @@ version = "1.16.1+1"
 
 [[deps.CalciumScoring]]
 deps = ["DSP", "Distributions", "ImageMorphology", "InteractiveUtils", "Revise", "Statistics", "Unitful"]
-git-tree-sha1 = "6fd0098d1bcebfa76ddd3a9fc68d040962827018"
+git-tree-sha1 = "eea31c0b6eae0c15569b6030f2e5a067c88d558f"
+repo-rev = "master"
+repo-url = "https://github.com/Dale-Black/CalciumScoring.jl.git"
 uuid = "9c0cb1da-21b1-4615-967b-153e03110a28"
 version = "0.3.0"
 
