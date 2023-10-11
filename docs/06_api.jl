@@ -1,15 +1,19 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> title = "API"
+#> category = "API"
+
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 4430a6d2-6e99-416a-8afa-27c3c049dc08
 # ╠═╡ show_logs = false
 begin
-	using Pkg; Pkg.activate(temp = true)
-	Pkg.add("PlutoUI")
-	Pkg.add(url = "https://github.com/Dale-Black/CalciumScoring.jl")
+	using Pkg
+	Pkg.activate(".")
+	Pkg.instantiate()
 
 	using PlutoUI, CalciumScoring
 end;

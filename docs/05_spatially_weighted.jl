@@ -1,17 +1,19 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> title = "Spatially Weighted"
+#> category = "Tutorials"
+
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 5356d60d-6bea-4995-b62b-43580455f160
 # ╠═╡ show_logs = false
 begin
-	using Pkg; Pkg.activate(temp = true)
-	Pkg.add(url = "https://github.com/Dale-Black/CalciumScoring.jl")
-	Pkg.add(["PlutoUI", "CairoMakie"])
-	Pkg.add(["ImageFiltering", "ImageMorphology", "Noise"])
-	Pkg.add("Statistics")
+	using Pkg
+	Pkg.activate(".")
+	Pkg.instantiate()
 	
 	using CalciumScoring
 	using PlutoUI, CairoMakie

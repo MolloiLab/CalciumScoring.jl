@@ -1,14 +1,19 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> title = "Getting Started"
+#> category = "Quick Start"
+
 using Markdown
 using InteractiveUtils
 
 # ╔═╡ 19b78bb6-ba8c-4e43-85c2-ba9148535f4b
 # ╠═╡ show_logs = false
 begin
-	using Pkg; Pkg.activate(temp = true)
-	Pkg.add("PlutoUI")
+	using Pkg
+	Pkg.activate(".")
+	Pkg.instantiate()
 	
 	using PlutoUI
 end

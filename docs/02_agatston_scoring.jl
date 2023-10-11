@@ -1,6 +1,10 @@
 ### A Pluto.jl notebook ###
 # v0.19.26
 
+#> [frontmatter]
+#> title = "Agatston Scoring"
+#> category = "Tutorials"
+
 using Markdown
 using InteractiveUtils
 
@@ -17,11 +21,9 @@ end
 # ╔═╡ 2ed53026-7897-465a-a388-3d800ac2de96
 # ╠═╡ show_logs = false
 begin
-	using Pkg; Pkg.activate(temp = true)
-	Pkg.add(url = "https://github.com/Dale-Black/CalciumScoring.jl")
-	Pkg.add(["PlutoUI", "CairoMakie"])
-	Pkg.add(["ImageFiltering", "ImageMorphology", "Noise"])
-	Pkg.add("Statistics")
+	using Pkg
+	Pkg.activate(".")
+	Pkg.instantiate()
 	
 	using CalciumScoring
 	using PlutoUI, CairoMakie
