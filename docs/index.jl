@@ -2,7 +2,7 @@
 # v0.19.26
 
 #> [frontmatter]
-#> title = "CalciumScoring.jl"
+#> title = "docs/CalciumScoring.jl"
 #> sidebar = "false"
 
 using Markdown
