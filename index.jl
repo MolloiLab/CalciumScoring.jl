@@ -2,7 +2,7 @@
 # v0.19.26
 
 #> [frontmatter]
-#> title = "docs/CalciumScoring.jl"
+#> title = "CalciumScoring.jl"
 #> sidebar = "false"
 
 using Markdown
@@ -12,7 +12,7 @@ using InteractiveUtils
 # ╠═╡ show_logs = false
 begin
 	using Pkg
-	Pkg.activate(".")
+	Pkg.activate(joinpath(pwd(), "docs"))
 	Pkg.instantiate()
 
 	using HTMLStrings: to_html, head, link, script, divv, h1, img, p, span, a, figure, hr
@@ -80,20 +80,20 @@ end
 
 # ╔═╡ ab3e7613-3926-4216-a2ea-8bef708a9e20
 article_list_quickstart = Article[
-	Article("Getting Started", "01_getting_started.jl", "https://img.freepik.com/free-photo/futuristic-spaceship-takes-off-into-purple-galaxy-fueled-by-innovation-generated-by-ai_24640-100023.jpg"),
+	Article("Getting Started", "docs/01_getting_started.jl", "https://img.freepik.com/free-photo/futuristic-spaceship-takes-off-into-purple-galaxy-fueled-by-innovation-generated-by-ai_24640-100023.jpg"),
 ];
 
 # ╔═╡ 201962ba-6c3d-43bb-8593-56a46fe1e9a4
 article_list_tutorials = Article[
-	Article("Agatston Scoring", "02_agatston_scoring.jl", "https://img.freepik.com/free-vector/human-heart-disease-symbol_1308-107392.jpg"),
-	Article("Volume Fraction", "03_volume_fraction.jl", "https://img.freepik.com/free-vector/heart-with-heartbeat_78370-2027.jpg"),
-	Article("Integrated", "04_integrated.jl", "https://img.freepik.com/free-vector/high-blood-pressure-abstract-concept-illustration_335657-4603.jpg"),
-	Article("Spatially Weighted", "05_spatially_weighted.jl", "https://img.freepik.com/free-vector/heartbeat-with-heart-rate-graph_1308-108566.jpg"),
+	Article("Agatston Scoring", "docs/02_agatston_scoring.jl", "https://img.freepik.com/free-vector/human-heart-disease-symbol_1308-107392.jpg"),
+	Article("Volume Fraction", "docs/03_volume_fraction.jl", "https://img.freepik.com/free-vector/heart-with-heartbeat_78370-2027.jpg"),
+	Article("Integrated", "docs/04_integrated.jl", "https://img.freepik.com/free-vector/high-blood-pressure-abstract-concept-illustration_335657-4603.jpg"),
+	Article("Spatially Weighted", "docs/05_spatially_weighted.jl", "https://img.freepik.com/free-vector/heartbeat-with-heart-rate-graph_1308-108566.jpg"),
 ];
 
 # ╔═╡ 1f7202ca-5612-487e-9fd8-718fe3245fab
 article_list_api = Article[
-	Article("API", "06_api.jl", "https://img.freepik.com/free-photo/modern-technology-workshop-creativity-innovation-communication-development-generated-by-ai_188544-24548.jpg"),
+	Article("API", "docs/06_api.jl", "https://img.freepik.com/free-photo/modern-technology-workshop-creativity-innovation-communication-development-generated-by-ai_188544-24548.jpg"),
 ];
 
 # ╔═╡ 9fe7717e-0d5a-4238-8834-ea7608b27790
