@@ -43,6 +43,11 @@ using DataFrames: DataFrame
 # ╔═╡ 9a9bb5c2-6a1b-4d47-9428-014bc2701ce8
 include(joinpath(pwd(), "utils.jl")); # helper functions for creating phantoms
 
+# ╔═╡ bee9b716-27d3-47ca-bc2f-c710422cfda2
+md"""
+# Set up
+"""
+
 # ╔═╡ e1e7bc0a-7677-43c8-b71f-e76db0e5440f
 md"""
 ## Activate environment
@@ -78,6 +83,9 @@ md"""
 md"""
 ## Import Packages
 """
+
+# ╔═╡ 326eb4c9-462d-4fec-ad6b-0eeeb291e044
+TableOfContents()
 
 # ╔═╡ aa3585ed-2a4e-4ae7-9c02-7fd05cd91242
 md"""
@@ -122,9 +130,6 @@ md"""
 !!! success "Overview"
 	[Previously]((00) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
 """
-
-# ╔═╡ 326eb4c9-462d-4fec-ad6b-0eeeb291e044
-TableOfContents()
 
 # ╔═╡ a662a8cb-002f-4f00-904e-684576029fa9
 md"""
@@ -298,6 +303,7 @@ We just demonstrated how `score()` can be used with the `Agatston()` algorithm. 
 """
 
 # ╔═╡ Cell order:
+# ╟─bee9b716-27d3-47ca-bc2f-c710422cfda2
 # ╟─e1e7bc0a-7677-43c8-b71f-e76db0e5440f
 # ╠═fd8dd444-ff11-491e-93bb-1660ef17593b
 # ╟─61ec4074-97a5-4920-af0d-5c7f8cb7da1e
@@ -309,10 +315,10 @@ We just demonstrated how `score()` can be used with the `Agatston()` algorithm. 
 # ╠═ee4aa1d5-2b94-42a5-b85a-89534064b220
 # ╠═61c966fb-1ba1-40b9-a783-2442f2a42871
 # ╠═9a9bb5c2-6a1b-4d47-9428-014bc2701ce8
+# ╠═326eb4c9-462d-4fec-ad6b-0eeeb291e044
 # ╟─aa3585ed-2a4e-4ae7-9c02-7fd05cd91242
 # ╟─5bbe69ff-3326-4e21-b9ae-3cd61a847006
 # ╟─a402159d-1625-43d8-a908-d73da3e84282
-# ╠═326eb4c9-462d-4fec-ad6b-0eeeb291e044
 # ╟─a662a8cb-002f-4f00-904e-684576029fa9
 # ╠═85723662-70ed-4fc6-b438-8c418ac63f1b
 # ╠═82297cd0-66b1-45e8-be88-f29c677be5e2

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.32
 
 #> [frontmatter]
 #> title = "Volume Fraction"
@@ -8,18 +8,84 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 2407ead4-e7d3-4885-b3ac-d7ef1da1454a
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
+# ╔═╡ 7ae3a705-bc9b-4514-a179-4a82f08df9e6
 # ╠═╡ show_logs = false
-begin
+using Pkg; Pkg.activate("."); Pkg.instantiate()
+
+# ╔═╡ efe79ac3-fe84-47a7-9ada-7357f4ed97d7
+using PlutoUI: TableOfContents, bind, Slider
+
+# ╔═╡ 4bfb1bee-9a91-41c0-ae1b-096a3a0207fe
+using CairoMakie: Figure, Axis, heatmap!, Colorbar
+
+# ╔═╡ a0733e33-4b7e-4494-9bb3-13206e3b83af
+using CalciumScoring: score, VolumeFraction
+
+# ╔═╡ e85a8141-30db-48ff-b84e-4e3f68841d90
+using Statistics: mean
+
+# ╔═╡ 3bebec59-265d-4a28-aa25-4894af7075cc
+using ImageMorphology: dilate
+
+# ╔═╡ 46604fc3-6cb0-4c7c-8b61-fe8baae5d6a6
+using DataFrames: DataFrame
+
+# ╔═╡ 34a80e1a-2a95-4b8d-89bc-e73d6ad200c3
+include(joinpath(pwd(), "utils.jl")); # helper functions for creating phantoms
+
+# ╔═╡ ff9845e8-ce4b-44a5-90b4-038335d36fd8
+md"""
+# Set up
+"""
+
+# ╔═╡ 7bcef3ec-fc9f-4430-be69-01d17c9ec403
+md"""
+## Activate environment
+"""
+
+# ╔═╡ 059ceb3f-6ad0-4414-9063-0632623ca392
+md"""
+!!! info
+	This documentation should work well as a downloadable tutorial, since it is just Pluto notebook. If you are using this notebook in an isolated environment, you can comment out the above cell 
+	```julia
+	# using Pkg; Pkg.activate("."); Pkg.instantiate()
+	```
+	and let Pluto.jl handle the notebook environment automatically.
+
+	Alternatively, you must manually add each of these `import`ed (`using`) packages. For example: 
+	
+	```julia
 	using Pkg
-	Pkg.activate(".")
-	Pkg.instantiate()
+	Pkg.activate(temp = true)
+	Pkg.add("CalciumScoring")
+	...
+	Pkg.add("DataFrames")
 	
 	using CalciumScoring
-	using PlutoUI, CairoMakie
-	using ImageFiltering, ImageMorphology, Noise
-	using Statistics
-end
+	...
+	using DataFrames
+	```
+
+	You will need to manually locate and include the [utils.jl file](https://github.com/Dale-Black/CalciumScoring.jl/blob/master/docs/utils.jl) to automatically create the phantoms.
+"""
+
+# ╔═╡ f6379941-0639-438f-8eac-1d926775bdde
+md"""
+## Import Packages
+"""
+
+# ╔═╡ c4e1c8b0-633c-4c3e-b6da-da8183e7783f
+TableOfContents()
 
 # ╔═╡ fe57f9cc-f298-45a6-8e09-327099b955d5
 md"""
@@ -65,136 +131,66 @@ md"""
 	[Previously]((01) Agatston Scoring.jl), we showcased the Agatston scoring method. This notebook will examine how to use the Volume Fraction Calium Mass method. To understand the theory behind this technique, please see [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
 """
 
-# ╔═╡ d77638af-8af0-435c-b81b-734ad859cd67
-md"""
-## Import Packages
-First, let's import CalciumScoring.jl, along with CairoMakie.jl for graphs, and PlutoUI.jl for some interactivity. Be aware this can take a long time, especially if this is the first time being downloaded. Future work on this package will focus on improving this.
-"""
-
-# ╔═╡ c4e1c8b0-633c-4c3e-b6da-da8183e7783f
-TableOfContents()
-
 # ╔═╡ 2c8e78b9-b8fb-42e7-a577-bbc636ff571f
 md"""
-!!! info "Create Simulated Images"
-	Let's quickly recreate the simulated images from the [previous tutorial]((01) Agatston Scoring.jl).
+!!! info
+	Let's quickly recreate the simulated images from the [previous tutorial]((01) Agatston Scoring.jl) along with the ground truth mass calculations
 """
 
 # ╔═╡ 081220be-1d71-48e2-8f4f-d89cfe6d2ba2
 begin
-    img = zeros(300, 300, 6)
-    h, k = size(img)[1:2] .// 2
-    r_small = 20
-    r_large = 50
-    mask_small = zeros(Bool, size(img)[1:2])
-    mask_large = zeros(Bool, size(img)[1:2])
-    for i in axes(img, 1)
-        for j in axes(img, 2)
-            for z in axes(img, 3)
-                if z <= 3
-                    if (i-h)^2 + (j-k)^2 <= r_small^2
-                        img[i, j, z] = 130
-                        mask_small[i, j] = true
-                    end
-                else
-                    if (i-h)^2 + (j-k)^2 <= r_large^2
-                        img[i, j, z] = 260
-                        mask_large[i, j] = true
-                    end
-                end
-            end
+	size_3d = (512, 512, 3)
+
+	densities_meas = [0.125, 0.275, 0.425] # mg/cm^3
+	phantom_meas, masks_meas = create_calcium_measurement_phantom(size_3d, densities_meas; energy = 120)
+
+	# Dilate the masks to avoid partial volume effect from surrounding tissue
+    masks_dil_meas = copy(masks_meas)
+    for idx in axes(masks_dil_meas, 4)
+        for _ in 1:5
+            masks_dil_meas[:, :, :, idx] = dilate(masks_dil_meas[:, :, :, idx])
         end
-	end
-    
-    img_noisy = copy(img)
-    for z in axes(img, 3)
-        img_noisy[:,:,z] = imfilter(img[:,:,z], Kernel.gaussian((10, 10)))
-        img_noisy[:,:,z] = mult_gauss(img_noisy[:,:,z])
     end
-
-	for _ in 1:15
-		dilate!(mask_small)
-	end
-	for _ in 1:10
-		erode!(mask_large)
-	end
-end;
-
-# ╔═╡ c606a885-82ee-43d0-9fa7-e3d1bc36a2d4
-mask_small_3D = cat(mask_small, mask_small, mask_small; dims = 3);
-
-# ╔═╡ d15fecd3-79b1-4fbf-9df8-8fa45aa6e9da
-mask_large_3D = cat(mask_large, mask_large, mask_large; dims = 3);
-
-# ╔═╡ 62e468a3-718a-4adf-93c6-9e15e79b9230
-md"""
-!!! info
-
-	Remember, the calibration rod has a known calcium density of ``0.1 \frac{mg}{mm^3}``, the voxel spacing is ``1 \ mm \times 1 \ mm \times 1 \ mm``, and the ground truth calcium mass in the coronary artery is ``376.91 \ mg``
-"""
-
-# ╔═╡ b7161fa3-4000-4983-900e-89c2121f6857
-ρ_rod = 0.2 # mg/mm^3
-
-# ╔═╡ 632bdc3b-8422-4555-aa13-bc9f002e4851
-spacing = [1, 1, 1] # mm
-
-# ╔═╡ 0ea05245-a7de-4c98-ab9e-67f9ef196af9
-gt_mass = 376.91 # mg
-
-# ╔═╡ ae93019d-66a3-486a-b272-ad9d25a6ed1b
-md"""
-## Background Mask
-This calcium quantification technique does not require any intensity-based thresholding. The mean intensity of the background material is needed to calculate the calcium contained within a region of interest (ROI).
-
-To find the background intensity, we will first create a background ring mask by dilating the dilated mask again and then subtracting it.
-"""
-
-# ╔═╡ d51c034a-1f35-443a-b862-aa95a7be18ce
-function dilate_recursively(mask, n)
-    dilated_mask = copy(mask)
-    for _ in 1:n
-        dilated_mask = dilate(dilated_mask)
-    end
-    return dilated_mask
 end
 
-# ╔═╡ 52a86bdc-5f06-4ba9-b193-356a24a6b847
-background_mask = dilate_recursively(mask_small, 5) - mask_small;
+# ╔═╡ a79d2779-2563-4b83-8e35-d97dbe5faad7
+md"""
+Select Slice: $(@bind z_meas Slider(axes(phantom_meas, 3), show_value = true))
 
-# ╔═╡ 44baf015-d340-4092-8ed1-74ca1690de52
-artery_img = img_noisy[:, :, 1:3];
+Select Mask Number: $(@bind mask_num_meas Slider(axes(masks_meas, 4), show_value = true))
+"""
 
-# ╔═╡ 250b430a-fe29-4db3-b6f8-85c1323c10b2
+# ╔═╡ 3b1744a3-2434-42f2-96ad-eb0cd6845866
 let
-	f = Figure()
-	z = 1
-	mask = getindex.(findall(isone, mask_small), [1 2])
-	bkg_mask = getindex.(findall(isone, background_mask), [1 2])
+    mask_dil = masks_dil_meas[:, :, :, mask_num_meas];
+    
+    f = Figure()
+    ax = Axis(
+        f[1, 1],
+        title = "Measurement Phantom (120 kV)",
+        titlesize = 20
+    )   
+    hm = heatmap!(phantom_meas[:, :, z_meas], colormap = :grays)
+    Colorbar(f[1, 2], hm)
 
-	ax = CairoMakie.Axis(
-		f[1, 1],
-		title = "Masks Overlayed (z = $(z))"
-	)
-	heatmap!(artery_img[:, :, z], colormap = :grays)
-	scatter!(mask[:, 1], mask[:, 2], color = (:red, 0.1), markersize = 5, label = "object mask")
-	scatter!(bkg_mask[:, 1], bkg_mask[:, 2], color = (:blue, 0.1), markersize = 5, label = "background mask")
-	axislegend(ax)
-	f
+    ax = Axis(
+        f[1, 3],
+        title = "Dilated Masks",
+        titlesize = 20
+    )   
+    hm = heatmap!(phantom_meas[:, :, z_meas], colormap = :grays)
+    hm = heatmap!(mask_dil[:, :, z_meas], colormap = (:jet, 0.5))
+    f
 end
 
-# ╔═╡ 8acd5e7b-bd9a-4a40-b786-65940efb9962
-background_mask_3D = Bool.(cat(background_mask, background_mask, background_mask; dims = 3));
+# ╔═╡ 1ac1a1bb-d469-457f-be90-fe1b92275b90
+begin
+	spacing = [0.5, 0.5, 0.5] # mm
 
-# ╔═╡ df691f58-a424-43b7-a211-750387436f67
-bkg_intensity = mean(artery_img[background_mask_3D])
-
-# ╔═╡ df75acb8-46c9-4445-a9f4-fabcdf6a29fc
-md"""
-!!! info
-
-	The voxel size is simply `1` since `1 x 1 x 1 = 1`
-"""
+	voxel_vol = 0.5^3
+	vol = sum(masks_meas[:, :, :, 1]) * voxel_vol
+	gt_mass = densities_meas .* vol # mg
+end
 
 # ╔═╡ a4f4db07-adf3-49f5-b9ef-464f6249dc41
 md"""
@@ -203,12 +199,6 @@ md"""
 
 # ╔═╡ a6cdb21c-42c7-44eb-84a1-f34bb67fc831
 voxel_size = spacing[1] * spacing[2] * spacing[3]
-
-# ╔═╡ d56954da-dbed-4392-8796-5943c8f85fd1
-rod_img = img_noisy[:, :, 4:6];
-
-# ╔═╡ a9158ed6-b383-438f-86c3-1f4f8aef65a9
-calibration_rod_intensity = mean(rod_img[mask_large_3D])
 
 # ╔═╡ 53e784fa-2604-4165-a09d-34bc1cc32ac2
 volume_fraction_mass = score(artery_img[mask_large_3D], calibration_rod_intensity, bkg_intensity, voxel_size, ρ_rod, VolumeFraction())
@@ -226,32 +216,29 @@ We demonstrated how `score()` can be used with the `VolumeFraction()` algorithm.
 """
 
 # ╔═╡ Cell order:
+# ╟─ff9845e8-ce4b-44a5-90b4-038335d36fd8
+# ╟─7bcef3ec-fc9f-4430-be69-01d17c9ec403
+# ╠═7ae3a705-bc9b-4514-a179-4a82f08df9e6
+# ╟─059ceb3f-6ad0-4414-9063-0632623ca392
+# ╟─f6379941-0639-438f-8eac-1d926775bdde
+# ╠═efe79ac3-fe84-47a7-9ada-7357f4ed97d7
+# ╠═4bfb1bee-9a91-41c0-ae1b-096a3a0207fe
+# ╠═a0733e33-4b7e-4494-9bb3-13206e3b83af
+# ╠═e85a8141-30db-48ff-b84e-4e3f68841d90
+# ╠═3bebec59-265d-4a28-aa25-4894af7075cc
+# ╠═46604fc3-6cb0-4c7c-8b61-fe8baae5d6a6
+# ╠═34a80e1a-2a95-4b8d-89bc-e73d6ad200c3
+# ╠═c4e1c8b0-633c-4c3e-b6da-da8183e7783f
 # ╟─fe57f9cc-f298-45a6-8e09-327099b955d5
 # ╟─df71ccb2-4062-4d56-a887-d1de363beffa
 # ╟─cce7e28d-98ed-473b-8a15-add461821b60
-# ╟─d77638af-8af0-435c-b81b-734ad859cd67
-# ╠═2407ead4-e7d3-4885-b3ac-d7ef1da1454a
-# ╠═c4e1c8b0-633c-4c3e-b6da-da8183e7783f
 # ╟─2c8e78b9-b8fb-42e7-a577-bbc636ff571f
 # ╠═081220be-1d71-48e2-8f4f-d89cfe6d2ba2
-# ╠═c606a885-82ee-43d0-9fa7-e3d1bc36a2d4
-# ╠═d15fecd3-79b1-4fbf-9df8-8fa45aa6e9da
-# ╟─62e468a3-718a-4adf-93c6-9e15e79b9230
-# ╠═b7161fa3-4000-4983-900e-89c2121f6857
-# ╠═632bdc3b-8422-4555-aa13-bc9f002e4851
-# ╠═0ea05245-a7de-4c98-ab9e-67f9ef196af9
-# ╟─ae93019d-66a3-486a-b272-ad9d25a6ed1b
-# ╠═d51c034a-1f35-443a-b862-aa95a7be18ce
-# ╠═52a86bdc-5f06-4ba9-b193-356a24a6b847
-# ╠═44baf015-d340-4092-8ed1-74ca1690de52
-# ╟─250b430a-fe29-4db3-b6f8-85c1323c10b2
-# ╠═8acd5e7b-bd9a-4a40-b786-65940efb9962
-# ╠═df691f58-a424-43b7-a211-750387436f67
-# ╟─df75acb8-46c9-4445-a9f4-fabcdf6a29fc
+# ╟─a79d2779-2563-4b83-8e35-d97dbe5faad7
+# ╟─3b1744a3-2434-42f2-96ad-eb0cd6845866
+# ╠═1ac1a1bb-d469-457f-be90-fe1b92275b90
 # ╟─a4f4db07-adf3-49f5-b9ef-464f6249dc41
 # ╠═a6cdb21c-42c7-44eb-84a1-f34bb67fc831
-# ╠═d56954da-dbed-4392-8796-5943c8f85fd1
-# ╠═a9158ed6-b383-438f-86c3-1f4f8aef65a9
 # ╠═53e784fa-2604-4165-a09d-34bc1cc32ac2
 # ╟─c267e5de-afb8-4c42-8db1-77edbae9e669
 # ╟─ba100057-22e8-45be-a2d7-71d43a921928
