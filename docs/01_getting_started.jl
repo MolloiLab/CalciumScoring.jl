@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.26
+# v0.19.32
 
 #> [frontmatter]
 #> title = "Getting Started"
@@ -65,15 +65,6 @@ md"""
 	- Spatially weighted calcium scoring [5, 6]
 	
 	This collection of notebooks will briefly showcase how to use CalciumScoring.jl to quantify calcium using these techniques.
-	
-	**References**
-	1. [Quantification of coronary artery calcium using ultrafast computed tomography](https://doi.org/10.1016/0735-1097(90)90282-t)
-	2. [Ultra-low-dose coronary artery calcium scoring using novel scoring thresholds for low tube voltage protocols—a pilot study ](https://doi.org/10.1093/ehjci/jey019)
-	3. [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
-	4. [Integrated intensity-based technique for coronary artery calcium mass measurement: A phantom study](https://doi.org/10.1002/mp.16326)
-	5. [An alternative method for quantifying coronary artery calcification: the multi-ethnic study of atherosclerosis (MESA)](https://doi.org/10.1186/1471-2342-12-14)
-	6. [Spatially Weighted Coronary Artery Calcium Score and Coronary Heart Disease Events in the Multi-Ethnic Study of Atherosclerosis](https://doi.org/10.1161/CIRCIMAGING.120.011981)
-
 """
 
 # ╔═╡ cf35a8b5-a427-4c7d-9a54-32c4243995f4
@@ -138,6 +129,22 @@ Check out the [Agatston scoring]((01) Agatston Scoring.jl) tutorial to see how t
 # ╔═╡ 92d11a7d-0cc9-42bb-80d9-226b61a3949b
 TableOfContents()
 
+# ╔═╡ 5d69e5ce-fef4-42e1-ac35-f189ce3e234e
+md"""
+## References
+"""
+
+# ╔═╡ f38667a6-dde7-4e40-9d17-a5874a809abe
+md"""
+1. [Quantification of coronary artery calcium using ultrafast computed tomography](https://doi.org/10.1016/0735-1097(90)90282-t)
+2. [Ultra-low-dose coronary artery calcium scoring using novel scoring thresholds for low tube voltage protocols—a pilot study ](https://doi.org/10.1093/ehjci/jey019)
+3. [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1117/1.JMI.10.4.043502)
+4. [Integrated intensity-based technique for coronary artery calcium mass measurement: A phantom study](https://doi.org/10.1002/mp.16326)
+5. [An alternative method for quantifying coronary artery calcification: the multi-ethnic study of atherosclerosis (MESA)](https://doi.org/10.1186/1471-2342-12-14)
+6. [Spatially Weighted Coronary Artery Calcium Score and Coronary Heart Disease Events in the Multi-Ethnic Study of Atherosclerosis](https://doi.org/10.1161/CIRCIMAGING.120.011981)
+
+"""
+
 # ╔═╡ Cell order:
 # ╟─e0ee3cd9-f889-48de-99d8-dd1ac0ad4dc2
 # ╟─0dd245c9-eb79-4c95-b649-108fa372fe37
@@ -150,3 +157,5 @@ TableOfContents()
 # ╟─17a5a766-2795-4b4b-b553-84c0d3d1ca6e
 # ╠═19b78bb6-ba8c-4e43-85c2-ba9148535f4b
 # ╠═92d11a7d-0cc9-42bb-80d9-226b61a3949b
+# ╟─5d69e5ce-fef4-42e1-ac35-f189ce3e234e
+# ╟─f38667a6-dde7-4e40-9d17-a5874a809abe
