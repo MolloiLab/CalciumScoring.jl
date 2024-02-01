@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.32
+# v0.19.37
 
 #> [frontmatter]
 #> title = "Agatston Scoring"
@@ -29,13 +29,14 @@ using PlutoUI: TableOfContents, bind, Slider
 using CairoMakie: Figure, Axis, heatmap!, Colorbar
 
 # ╔═╡ c9074763-f0ea-4941-aa3b-9a554658c337
+# ╠═╡ show_logs = false
 using CalciumScoring: score, Agatston
 
 # ╔═╡ afcf6b72-8907-462a-a21c-1d523c647623
 using Statistics: mean
 
 # ╔═╡ ee4aa1d5-2b94-42a5-b85a-89534064b220
-using ImageMorphology: dilate
+using ImageMorphology: dilate, erode
 
 # ╔═╡ 61c966fb-1ba1-40b9-a783-2442f2a42871
 using DataFrames: DataFrame
@@ -45,7 +46,46 @@ include(joinpath(pwd(), "utils.jl")); # helper functions for creating phantoms
 
 # ╔═╡ bee9b716-27d3-47ca-bc2f-c710422cfda2
 md"""
-# Set up
+# Overview
+"""
+
+# ╔═╡ 5bbe69ff-3326-4e21-b9ae-3cd61a847006
+html"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({startOnLoad:true});
+    </script>
+</head>
+<body>
+    <div class="mermaid">
+        graph TB
+            classDef unique1 fill:#f9d71c,stroke:#333,stroke-width:2px;
+            classDef unique2 fill:#8cd9f5,stroke:#333,stroke-width:2px;
+            A["Overview: Four Different CAC Quantification Methods"]
+            A --> AgatstonRegime
+            A --> CalciumMassRegime
+            subgraph AgatstonRegime["Agatston Scoring Regime"]
+                B["Agatston Scoring"]
+                E["Spatially Weighted Calcium Scoring"]
+            end
+            subgraph CalciumMassRegime["Calcium Mass Quantification Regime"]
+                C["Volume Fraction Calcium Mass"]
+                D["Integrated Calcium Mass"]
+            end
+            class B unique1;
+            class C,D,E unique2;
+    </div>
+</body>
+</html>
+"""
+
+# ╔═╡ a402159d-1625-43d8-a908-d73da3e84282
+md"""
+!!! success "Overview"
+	This notebook will examine how to use the Agatston scoring method.
 """
 
 # ╔═╡ e1e7bc0a-7677-43c8-b71f-e76db0e5440f
@@ -90,64 +130,99 @@ TableOfContents()
 # ╔═╡ aa3585ed-2a4e-4ae7-9c02-7fd05cd91242
 md"""
 # Agatston Scoring
+
+**Agatston Score**
+
+Using the traditional Agatston score, we can quantify the amount of calcium contained within the region of interest. We will not need to assume any previous knowledge about calcium within the coronary artery.
+
+**Agatston Mass**
+
+However, the Agatston score returns an arbitrary number, and the direct correlation to physical quantities isn't clear. Luckly, the conversion into a mass score is straightforward forward and this is where the calibration rod comes in. If we measure the intensity of the calibration rod with a known calcium density, we can then correlate this to the unknown calcium in the coronary artery.
+
+CalciumScoring.jl takes care of most of this for us, with the same `score()` function, simply including a `mass_cal_factor` in the arguments. The mass calibration factor is derived by finding the calibration rod's mean intensity and dividing the rod's density by this mean intensity.
 """
 
-# ╔═╡ 5bbe69ff-3326-4e21-b9ae-3cd61a847006
-html"""
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-        mermaid.initialize({startOnLoad:true});
-    </script>
-</head>
-<body>
-    <div class="mermaid">
-        graph TB
-            classDef unique1 fill:#f9d71c,stroke:#333,stroke-width:2px;
-            classDef unique2 fill:#8cd9f5,stroke:#333,stroke-width:2px;
-            A["Overview: Four Different CAC Quantification Methods"]
-            A --> AgatstonRegime
-            A --> CalciumMassRegime
-            subgraph AgatstonRegime["Agatston Scoring Regime"]
-                B["Agatston Scoring"]
-                E["Spatially Weighted Calcium Scoring"]
-            end
-            subgraph CalciumMassRegime["Calcium Mass Quantification Regime"]
-                C["Volume Fraction Calcium Mass"]
-                D["Integrated Calcium Mass"]
-            end
-            class B unique1;
-            class C,D,E unique2;
-    </div>
-</body>
-</html>
-"""
-
-# ╔═╡ a402159d-1625-43d8-a908-d73da3e84282
+# ╔═╡ a3ba8309-06f1-4260-a3e7-9d5bb8952e04
 md"""
-!!! success "Overview"
-	[Previously]((00) Getting Started.jl), we introduced the CalciumScoring.jl package. This notebook will examine how to use the Agatston scoring method.
+## Calibration Phantom
 """
 
-# ╔═╡ a662a8cb-002f-4f00-904e-684576029fa9
+# ╔═╡ 4a9146c1-e4b9-41a9-93c3-887f2ce82c92
 md"""
-## Create Simulated CT Images
-This phantom contains calcium rods of known densities, but the goal is to test our calcium scoring accuracy by quantifying these inserts without directly referencing their true densities. After creating the phantom, its visualizations are presented, and the intensity of each calcium insert is measured. Using our `score()`ing function we can then predict the calcium in each insert and compare that to the ground truth.
+A calibration phantom is essentially a model or object with pre-known properties, predominantly used to calibrate imaging systems. Within this step, we'll be crafting a digital calibration phantom. This phantom will incorporate 1 rod, with a known density of 0.200 mg/cm^2. This calibration process becomes crucial for the subsequent phase when the task is to quantify calcium samples of unknown densities.
 """
 
 # ╔═╡ 85723662-70ed-4fc6-b438-8c418ac63f1b
 size_3d = (512, 512, 3)
 
+# ╔═╡ 0ca6a5a9-83a6-4d06-8604-1cb6f7b484f9
+begin
+    densities_cal = [0.200] # mg/cm^3
+	
+    phantom_cal, masks_cal = create_calcium_calibration_phantom(
+		size_3d, densities_cal; energy = 120, calcium_radius = 25
+	)
+end;
+
+# ╔═╡ a4eeb30d-86fd-4ff0-9ec3-689f7d36335b
+begin
+	# Dilate the masks to avoid partial volume effect from surrounding tissue
+    masks_cal_erode = Bool.(copy(masks_cal))
+    for idx in axes(masks_cal_erode, 4)
+        for _ in 1:5
+            masks_cal_erode[:, :, :, idx] = erode(masks_cal_erode[:, :, :, idx])
+        end
+    end
+end
+
+# ╔═╡ aad1f9a8-3ff8-492f-b037-3cc9c46c8736
+md"""
+Select Slice: $(@bind z_cal Slider(axes(phantom_cal, 3), show_value = true))
+
+Select Mask Number: $(@bind mask_num_cal Slider(axes(masks_cal_erode, 4), show_value = true))
+"""
+
+# ╔═╡ 74f656ec-54cb-4ac9-b6d1-c1b03c21d0a5
+let
+    mask = masks_cal_erode[:, :, :, mask_num_cal];
+    
+    f = Figure()
+    ax = Axis(
+        f[1, 1],
+        title = "Measurement Phantom (120 kV)",
+        titlesize = 20
+    )   
+    hm = heatmap!(phantom_cal[:, :, z_cal], colormap = :grays)
+    Colorbar(f[1, 2], hm)
+
+    ax = Axis(
+        f[1, 3],
+        title = "Dilated Masks",
+        titlesize = 20
+    )   
+    hm = heatmap!(phantom_cal[:, :, z_cal], colormap = :grays)
+    hm = heatmap!(mask[:, :, z_cal], colormap = (:jet, 0.5))
+    f
+end
+
+# ╔═╡ e6b713c6-c7d9-43f8-819f-2e38a0a1c086
+ρ_rod = densities_cal[1] # mg/mm^3
+
+# ╔═╡ 63636479-d1f9-4705-9e84-4b6ded3edad2
+calibration_rod_intensity = mean(phantom_cal[masks_cal_erode[:, :, :, 1]])
+
 # ╔═╡ 82297cd0-66b1-45e8-be88-f29c677be5e2
 begin
-	densities_meas = [0.125, 0.275, 0.425] # mg/cm^3
+	densities_meas = [0.025, 0.100, 0.250] # mg/cm^3
 	phantom_meas, masks_meas = create_calcium_measurement_phantom(size_3d, densities_meas; energy = 120)
 end;
 
-# ╔═╡ 171a80e4-e587-4378-8c2e-3aa79b582bd8
+# ╔═╡ fea38227-450a-49ed-893a-1d74f55c9198
 md"""
+## Measurement Phantom
+
+The measurement phantom contains calcium inserts of "unknown" mass that we are going to try to measure using various calcium algorithms.
+
 **Dilation of Masks for Measurement Phantom**
 
 In the context of image processing, dilation is a mathematical morphological operation that enlarges the boundaries of the foreground object. 
@@ -196,6 +271,20 @@ let
     f
 end
 
+# ╔═╡ 70a5dc1e-febd-4ed1-8d18-93653a94f317
+md"""
+# Calculations
+"""
+
+# ╔═╡ df7ded9f-5550-429d-a93f-17355e52f376
+md"""
+!!! warning "Agatston Scoring Threshold"
+
+	One important note is that the threshold of 130 HU is energy dependent. The traditional technique was defined at 120 kV, but recent studies have shown how to adapt the threshold for use in other tube voltages. This is important for reducing patient dose. 
+
+	`score()` accounts for this providing an optional argument `kv = 120`. This assumes that the input image was acquired at a tube voltage of 130, but the user can adjust this and the algorithm automatically updates the threshold and weighting factors accordingly.
+"""
+
 # ╔═╡ 8fb9dc5a-6a8b-4c68-856b-31950e61a2f2
 md"""
 ## Ground Truth Mass
@@ -211,40 +300,13 @@ begin
 	gt_mass = densities_meas .* vol # mg
 end
 
-# ╔═╡ 70a5dc1e-febd-4ed1-8d18-93653a94f317
-md"""
-# Agatston (Mass) Score
-
-**Agatston Score**
-
-Using the traditional Agatston score, we can now quantify the amount of calcium contained within the region of interest. We will not need to assume any previous knowledge about calcium within the coronary artery.
-
-**Agatston Mass**
-
-However, the Agatston score returns an arbitrary number, and the direct correlation to physical quantities isn't clear. Luckly, the conversion into a mass score is straightforward forward and this is where the calibration rod comes in. If we measure the intensity of the calibration rod with a known calcium density, we can then correlate this to the unknown calcium in the coronary artery.
-
-CalciumScoring.jl takes care of most of this for us, with the same `score()` function, simply including a `mass_cal_factor` in the arguments. The mass calibration factor is derived by finding the calibration rod's mean intensity and dividing the rod's density by this mean intensity.
-"""
-
-# ╔═╡ df7ded9f-5550-429d-a93f-17355e52f376
-md"""
-!!! warning "Agatston Scoring Threshold"
-
-	One important note is that the threshold of 130 HU is energy dependent. The traditional technique was defined at 120 kV, but recent studies have shown how to adapt the threshold for use in other tube voltages. This is important for reducing patient dose. 
-
-	`score()` accounts for this providing an optional argument `kv = 120`. This assumes that the input image was acquired at a tube voltage of 130, but the user can adjust this and the algorithm automatically updates the threshold and weighting factors accordingly.
-"""
-
 # ╔═╡ f60562c3-4837-4a64-94a3-b6993ae268ef
 md"""
 ## Low Density
 """
 
-# ╔═╡ e1ac238b-8446-48ef-8f6a-4f3390a56ca3
-ρ_rod = 0.2 # mg/mm^3
-
 # ╔═╡ 009280e2-04a8-4a55-9ae7-d6d551d8ac01
-mass_cal_factor = ρ_rod / mean(200)
+mass_cal_factor = ρ_rod / calibration_rod_intensity
 
 # ╔═╡ d3750403-27bd-4055-9378-1c54472fa936
 insert_low_density = phantom_meas .* masks_dil_meas[:, :, :, 1];
@@ -291,7 +353,7 @@ df_mass = DataFrame(
 # ╔═╡ e934660e-a1d1-4f74-b1f0-0070a373556c
 md"""
 !!! info "Agatston Scoring Limitations"
-	We can see that the mass score returns a value that is highly accurate as long as the density is high enough. Compare this to the lowest density mass score with the ground truth mass and we see nearly 50% underestimation. This is not a surprise and this is one of the limitations of Agatston scoring. The Agatston scoring approach applies an arbitrary threshold to the input array, and any voxel with an intensity below ``130`` (Hounsfield Units, HU) is removed from the calculation.
+	We can see that the mass score returns a value that is highly accurate as long as the density is high enough. Compare this to the lowest density mass score with the ground truth mass that labeled this region as no calcium (`CAC = 0`). This is not a surprise and this is one of the limitations of Agatston scoring. The Agatston scoring approach applies an arbitrary threshold to the input array, and any voxel with an intensity below ``130`` (Hounsfield Units, HU) is removed from the calculation.
 
 	This is one of the main limitations of Agatston scoring and some of the motivations behind the recent "calcium mass" approaches.
 """
@@ -299,11 +361,13 @@ md"""
 # ╔═╡ 4327c28c-473d-40a5-8530-b3b7dd86b6f8
 md"""
 # Next Steps
-We just demonstrated how `score()` can be used with the `Agatston()` algorithm. This is the traditional calcium scoring algorithm. Check out the [Volume Fraction Calcium Mass]((02) Volume Fraction.jl) tutorial to see how to implement a more recent approach with various benefits.
+We just demonstrated how `score()` can be used with the `Agatston()` algorithm. This is the traditional calcium scoring algorithm. Check out the [Volume Fraction Calcium Mass](02_volume_fraction.jl) tutorial to see how to implement a more recent approach with various benefits.
 """
 
 # ╔═╡ Cell order:
 # ╟─bee9b716-27d3-47ca-bc2f-c710422cfda2
+# ╟─5bbe69ff-3326-4e21-b9ae-3cd61a847006
+# ╟─a402159d-1625-43d8-a908-d73da3e84282
 # ╟─e1e7bc0a-7677-43c8-b71f-e76db0e5440f
 # ╠═fd8dd444-ff11-491e-93bb-1660ef17593b
 # ╟─61ec4074-97a5-4920-af0d-5c7f8cb7da1e
@@ -317,22 +381,26 @@ We just demonstrated how `score()` can be used with the `Agatston()` algorithm. 
 # ╠═9a9bb5c2-6a1b-4d47-9428-014bc2701ce8
 # ╠═326eb4c9-462d-4fec-ad6b-0eeeb291e044
 # ╟─aa3585ed-2a4e-4ae7-9c02-7fd05cd91242
-# ╟─5bbe69ff-3326-4e21-b9ae-3cd61a847006
-# ╟─a402159d-1625-43d8-a908-d73da3e84282
-# ╟─a662a8cb-002f-4f00-904e-684576029fa9
+# ╟─a3ba8309-06f1-4260-a3e7-9d5bb8952e04
+# ╟─4a9146c1-e4b9-41a9-93c3-887f2ce82c92
 # ╠═85723662-70ed-4fc6-b438-8c418ac63f1b
+# ╠═0ca6a5a9-83a6-4d06-8604-1cb6f7b484f9
+# ╠═a4eeb30d-86fd-4ff0-9ec3-689f7d36335b
+# ╟─aad1f9a8-3ff8-492f-b037-3cc9c46c8736
+# ╟─74f656ec-54cb-4ac9-b6d1-c1b03c21d0a5
+# ╠═e6b713c6-c7d9-43f8-819f-2e38a0a1c086
+# ╠═63636479-d1f9-4705-9e84-4b6ded3edad2
+# ╟─fea38227-450a-49ed-893a-1d74f55c9198
 # ╠═82297cd0-66b1-45e8-be88-f29c677be5e2
-# ╟─171a80e4-e587-4378-8c2e-3aa79b582bd8
 # ╠═f8547b8c-53ee-46b1-94a9-3b2fc5a28bc0
 # ╟─540c1c19-d5dc-431f-8936-55a8f6cac269
 # ╟─bc513431-a289-4dc4-a1bb-6889fe4085df
+# ╟─70a5dc1e-febd-4ed1-8d18-93653a94f317
+# ╟─df7ded9f-5550-429d-a93f-17355e52f376
 # ╟─8fb9dc5a-6a8b-4c68-856b-31950e61a2f2
 # ╠═ef0e3fdd-7a57-4d6d-a8c3-c2ceb889de6a
 # ╠═f3459701-0440-45e7-b204-a2017855d565
-# ╟─70a5dc1e-febd-4ed1-8d18-93653a94f317
-# ╟─df7ded9f-5550-429d-a93f-17355e52f376
 # ╟─f60562c3-4837-4a64-94a3-b6993ae268ef
-# ╠═e1ac238b-8446-48ef-8f6a-4f3390a56ca3
 # ╠═009280e2-04a8-4a55-9ae7-d6d551d8ac01
 # ╠═d3750403-27bd-4055-9378-1c54472fa936
 # ╠═982ffa5f-9b63-4b66-8404-059e7900bd0d

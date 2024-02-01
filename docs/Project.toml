@@ -1,6 +1,7 @@
 [deps]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
 CalciumScoring = "9c0cb1da-21b1-4615-967b-153e03110a28"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 HTMLStrings = "c47fe496-5789-4377-b1db-55e89f2ee0c6"
 ImageFiltering = "6a3955dd-da59-5b1f-98d4-e7296123deb5"
 ImageMorphology = "787d08f9-d448-5407-9aad-5290dd7ab264"

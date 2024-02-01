@@ -3,7 +3,7 @@ using Random
 function create_calcium_calibration_phantom(
     phantom_size::Tuple{Int64, Int64}, 
 	calcium_densities;
-    noise_mean = 0, noise_std = 50, energy = 120
+    noise_mean = 0, noise_std = 50, energy = 120, calcium_radius = 25
 )
 
     # Adjust calcium intensities based on energy
@@ -37,7 +37,7 @@ function create_calcium_calibration_phantom(
 
     # Calcium insert details
     calcium_intensities = 1.4 .* 1e3 .* adjust_for_energy.(calcium_densities, energy)
-    calcium_insert_radius = div(25, 2)
+    calcium_insert_radius = calcium_radius
     angle_increment = 2 * π / length(calcium_intensities)
     distance_to_center = 0.6 * (soft_tissue_radius - calcium_insert_radius * 2)
 
@@ -67,7 +67,7 @@ end
 function create_calcium_calibration_phantom(
     phantom_size::Tuple{Int64, Int64, Int64},
 	calcium_densities; 
-    noise_mean = 0, noise_std = 50, energy = 120
+    noise_mean = 0, noise_std = 50, energy = 120, calcium_radius = 25
 )
     phantom_slices = []
     mask_slices = []
@@ -75,7 +75,7 @@ function create_calcium_calibration_phantom(
     for _ in 1:phantom_size[3]
         p, m = create_calcium_calibration_phantom(
 			phantom_size[1:2], calcium_densities;
-			noise_mean=noise_mean, noise_std=noise_std, energy=energy)
+			noise_mean=noise_mean, noise_std=noise_std, energy=energy, calcium_radius = calcium_radius)
         push!(phantom_slices, p)
         push!(mask_slices, m)
     end
