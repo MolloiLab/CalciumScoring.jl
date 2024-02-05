@@ -211,12 +211,6 @@ end
 # ╔═╡ 63636479-d1f9-4705-9e84-4b6ded3edad2
 calibration_rod_intensity = mean(phantom_cal[masks_cal_erode[:, :, :, 1]])
 
-# ╔═╡ 82297cd0-66b1-45e8-be88-f29c677be5e2
-begin
-	densities_meas = [0.025, 0.100, 0.250] # mg/cm^3
-	phantom_meas, masks_meas = create_calcium_measurement_phantom(size_3d, densities_meas; energy = 120)
-end;
-
 # ╔═╡ fea38227-450a-49ed-893a-1d74f55c9198
 md"""
 ## Measurement Phantom
@@ -229,6 +223,12 @@ In the context of image processing, dilation is a mathematical morphological ope
 
 In this specific step, we dilate the masks associated with the measurement phantom. The primary motivation behind this dilation is to circumvent the partial volume effect that may arise from the surrounding tissue. The partial volume effect can cause blurring and if we don't include the surrounding tissue, some of the calcium intensity can be blurred into the surrounding background tissue and be lost in our measurements
 """
+
+# ╔═╡ 82297cd0-66b1-45e8-be88-f29c677be5e2
+begin
+	densities_meas = [0.025, 0.100, 0.250] # mg/cm^3
+	phantom_meas, masks_meas = create_calcium_measurement_phantom(size_3d, densities_meas; energy = 120)
+end;
 
 # ╔═╡ f8547b8c-53ee-46b1-94a9-3b2fc5a28bc0
 begin
