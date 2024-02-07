@@ -336,6 +336,9 @@ insert_high_density = phantom_meas .* masks_dil_meas[:, :, :, 3];
 # ╔═╡ 4e4c6ddf-3b98-4eff-a454-1eb7f471c250
 agatson_score_high_density, volume_score_high_density, mass_score_high_density = score(insert_high_density, spacing, mass_cal_factor, Agatston())
 
+# ╔═╡ 189b9b47-b0fb-46ea-8f3c-0ef7a3c54286
+agatson_pred = [agatson_score_low_density, agatson_score_medium_density, agatson_score_high_density]
+
 # ╔═╡ bcdbee5e-f742-4244-b81a-046e99b15399
 mass_pred = [mass_score_low_density, mass_score_medium_density, mass_score_high_density]
 
@@ -347,7 +350,8 @@ md"""
 # ╔═╡ 81badee4-e40e-4a07-bfca-cafebe18a8c1
 df_mass = DataFrame(
     "Ground Truth Mass (mg)" => gt_mass,
-    "Predicted Mass (mg)" => mass_pred
+    "Predicted Mass (mg)" => mass_pred,
+    "Predicted Scores" => agatson_pred
 )
 
 # ╔═╡ e934660e-a1d1-4f74-b1f0-0070a373556c
@@ -410,6 +414,7 @@ We just demonstrated how `score()` can be used with the `Agatston()` algorithm. 
 # ╟─624cd45b-c9b8-4995-9e70-06c0f898182f
 # ╠═64076971-fd4e-4698-a54d-27f1855eeea7
 # ╠═4e4c6ddf-3b98-4eff-a454-1eb7f471c250
+# ╠═189b9b47-b0fb-46ea-8f3c-0ef7a3c54286
 # ╠═bcdbee5e-f742-4244-b81a-046e99b15399
 # ╟─df284b6b-aefb-4651-93b8-9102eaca8795
 # ╠═81badee4-e40e-4a07-bfca-cafebe18a8c1

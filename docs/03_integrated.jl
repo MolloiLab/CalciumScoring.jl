@@ -29,7 +29,7 @@ using PlutoUI: TableOfContents, bind, Slider
 using CairoMakie: Figure, Axis, heatmap!, Colorbar, scatterlines!
 
 # ╔═╡ bf491453-c22d-473e-b5f5-057dcdca13b8
-using LaTeXStrings
+using LaTeXStrings: @L_str
 
 # ╔═╡ 2459744e-f901-449d-8f82-d18f1b67dd24
 using CalciumScoring: score, Integrated
@@ -196,6 +196,50 @@ let
     f
 end
 
+# ╔═╡ 5cdc016e-c8de-4869-825a-8a1a4a2fdc2c
+md"""
+### Calibration Curve
+Unlike the Volume Fraction method, Integrated Calcium Mass requires a calibration curve from various Calibration rods. This makes the set up more involved but allows for potentially better accuracy than the Volume Fraction Calcium Mass method. A calibration rod and soft tissue ROI can create the calibration curve if only one calibration rod is included.
+"""
+
+# ╔═╡ c3bc29b4-30f7-41e3-aadc-d1908f9d6856
+xs = densities_cal
+
+# ╔═╡ e97121fd-a762-4afd-bb43-cbedf538d43f
+ys = [mean(phantom_cal[masks_cal_erode[:, :, :, y]]) for y in axes(masks_cal_erode, 4)]
+
+# ╔═╡ dce61794-6faf-435d-b3ab-676d34df4f8a
+let
+	f = Figure()
+
+	ax = Axis(
+		f[1, 1],
+		title = L"\text{Calibration Curve}",
+		titlesize = 20,
+		ylabel = L"\text{Intensity (HU)}",
+		xlabel = L"\text{Density }(\frac{mg}{cm^3})"
+	)
+	scatterlines!(xs, ys, color = :red)
+	f
+end
+
+# ╔═╡ 6c234d50-1830-4c78-bd79-19576fc25334
+m = (ys[2] - ys[1]) / (xs[2] - xs[1])
+
+# ╔═╡ 52dcddee-f62c-4a63-abde-52ba264028dd
+b = ys[1] - m * xs[1]
+
+# ╔═╡ f7d6c357-7c12-4db7-a369-bba0692d07b6
+function calculate_intensity(x)
+    return y = m * x + b
+end
+
+# ╔═╡ 0ecdba1a-5fc9-4544-8e34-ba153d1e0fd0
+ρ_cal = 0.050 # mg/cm^3
+
+# ╔═╡ 7f3330f9-6d85-4bce-a66f-9431c2a98514
+intensity_cal = calculate_intensity(ρ_cal)
+
 # ╔═╡ d7ab71bf-75ca-422f-9cfc-c500dcce3dd9
 md"""
 ## Measurement Phantom
@@ -265,44 +309,6 @@ let
     f
 end
 
-# ╔═╡ 5cdc016e-c8de-4869-825a-8a1a4a2fdc2c
-md"""
-### Calibration Curve
-Unlike the Volume Fraction method, Integrated Calcium Mass requires a calibration curve from various Calibration rods. This makes the set up more involved but allows for potentially better accuracy than the Volume Fraction Calcium Mass method. A calibration rod and soft tissue ROI can create the calibration curve if only one calibration rod is included.
-"""
-
-# ╔═╡ c3bc29b4-30f7-41e3-aadc-d1908f9d6856
-xs = densities_cal
-
-# ╔═╡ e97121fd-a762-4afd-bb43-cbedf538d43f
-ys = [mean(phantom_cal[masks_cal_erode[:, :, :, y]]) for y in axes(masks_cal_erode, 4)]
-
-# ╔═╡ dce61794-6faf-435d-b3ab-676d34df4f8a
-let
-	f = Figure()
-
-	ax = Axis(
-		f[1, 1],
-		title = L"\text{Calibration Curve}",
-		titlesize = 20,
-		ylabel = L"\text{Intensity (HU)}",
-		xlabel = L"\text{Density }(\frac{mg}{cm^3})"
-	)
-	scatterlines!(xs, ys, color = :red)
-	f
-end
-
-# ╔═╡ 6c234d50-1830-4c78-bd79-19576fc25334
-m = (ys[2] - ys[1]) / (xs[2] - xs[1])
-
-# ╔═╡ 52dcddee-f62c-4a63-abde-52ba264028dd
-b = ys[1] - m * xs[1]
-
-# ╔═╡ f7d6c357-7c12-4db7-a369-bba0692d07b6
-function calculate_intensity(x)
-    return y = m * x + b
-end
-
 # ╔═╡ d1ee5640-6086-413a-afa8-5ac9654d4625
 md"""
 Now we can use any arbitrary calibration density as our input and calculate the intensity corresponding to the calibration density. With more calibration points, this becomes more accurate. Let's use `0.1` as the density and get the corresponding intensity.
@@ -341,18 +347,12 @@ insert_low_density = phantom_meas[masks_dil_meas[:, :, :, 1]]
 # ╔═╡ 95b451e4-b925-4b7e-ba22-1311134e461d
 bkg_intensity_low_density = mean(phantom_meas[bg_mask[:, :, :, 1]])
 
-# ╔═╡ 0ecdba1a-5fc9-4544-8e34-ba153d1e0fd0
-ρ_low_density = 0.020
-
-# ╔═╡ 7f3330f9-6d85-4bce-a66f-9431c2a98514
-intensity_low_density = calculate_intensity(ρ_low_density)
-
 # ╔═╡ b5a2e358-a5e3-444e-a567-0a576df9f272
 integrated_mass_low_density = score(
 	bkg_intensity_low_density, 
-	intensity_low_density, 
+	intensity_cal, 
 	spacing, 
-	ρ_low_density,
+	ρ_cal,
 	Integrated(insert_low_density)
 )
 
@@ -367,18 +367,12 @@ insert_medium_density = phantom_meas[masks_dil_meas[:, :, :, 2]]
 # ╔═╡ e8cd2c63-678f-4038-9a84-667227b2eea8
 bkg_intensity_medium_density = mean(phantom_meas[bg_mask[:, :, :, 2]])
 
-# ╔═╡ 332096e0-ad2a-44d1-824e-3cc47023498e
-ρ_medium_density = 0.080
-
-# ╔═╡ 5a62e944-a4bf-45a5-9816-d4759bdffe1d
-intensity_medium_density = calculate_intensity(ρ_medium_density)
-
 # ╔═╡ 5f90c160-9dc9-4edd-80e5-b7318a1a6209
 integrated_mass_medium_density = score(
 	bkg_intensity_medium_density, 
-	intensity_medium_density, 
+	intensity_cal, 
 	spacing, 
-	ρ_medium_density,
+	ρ_cal,
 	Integrated(insert_medium_density)
 )
 
@@ -393,18 +387,12 @@ insert_high_density = phantom_meas[masks_dil_meas[:, :, :, 3]]
 # ╔═╡ 474a93be-5892-4915-a5ee-9d238928b050
 bkg_intensity_high_density = mean(phantom_meas[bg_mask[:, :, :, 3]])
 
-# ╔═╡ 9f57c582-42c2-4027-ae82-7174b82b6612
-ρ_high_density = 0.225
-
-# ╔═╡ c291d586-6908-4b91-b376-9d57d2d99485
-intensity_high_density = calculate_intensity(ρ_high_density)
-
 # ╔═╡ 35580a14-a258-4a92-9a8f-7c7ac454d8df
 integrated_mass_high_density = score(
 	bkg_intensity_high_density, 
-	intensity_high_density, 
+	intensity_cal, 
 	spacing, 
-	ρ_high_density,
+	ρ_cal,
 	Integrated(insert_high_density)
 )
 
@@ -431,7 +419,7 @@ md"""
 # ╔═╡ 7e965e51-494c-4796-b06b-f301b02538fb
 md"""
 # Next Steps
-We just demonstrated how `score()` can be used with the `Integrated()` algorithm. Let's now look at the last algorithm [Spatially Weighted Calcium Scoring]((04) Spatially Weighted.jl).
+We just demonstrated how `score()` can be used with the `Integrated()` algorithm. Let's now look at the last algorithm [Spatially Weighted Calcium Scoring](04_spatially_weighted.jl).
 """
 
 # ╔═╡ Cell order:
@@ -465,6 +453,8 @@ We just demonstrated how `score()` can be used with the `Integrated()` algorithm
 # ╠═6c234d50-1830-4c78-bd79-19576fc25334
 # ╠═52dcddee-f62c-4a63-abde-52ba264028dd
 # ╠═f7d6c357-7c12-4db7-a369-bba0692d07b6
+# ╠═0ecdba1a-5fc9-4544-8e34-ba153d1e0fd0
+# ╠═7f3330f9-6d85-4bce-a66f-9431c2a98514
 # ╟─d7ab71bf-75ca-422f-9cfc-c500dcce3dd9
 # ╠═162f9379-a269-4baa-809b-acdedca4018b
 # ╟─4eff5ef2-bac3-4fd7-b9af-63aa1dfaaaa8
@@ -479,20 +469,14 @@ We just demonstrated how `score()` can be used with the `Integrated()` algorithm
 # ╟─fb447814-108f-4966-baa9-31ab59375fa1
 # ╠═f74c09bd-f916-4aff-a3d4-5c3f942af02b
 # ╠═95b451e4-b925-4b7e-ba22-1311134e461d
-# ╠═0ecdba1a-5fc9-4544-8e34-ba153d1e0fd0
-# ╠═7f3330f9-6d85-4bce-a66f-9431c2a98514
 # ╠═b5a2e358-a5e3-444e-a567-0a576df9f272
 # ╟─4ca8eaf6-ddd8-48ea-9a32-f60b0bebb627
 # ╠═7aae5242-370e-4104-96d2-5883d76536ad
 # ╠═e8cd2c63-678f-4038-9a84-667227b2eea8
-# ╠═332096e0-ad2a-44d1-824e-3cc47023498e
-# ╠═5a62e944-a4bf-45a5-9816-d4759bdffe1d
 # ╠═5f90c160-9dc9-4edd-80e5-b7318a1a6209
 # ╟─d4f90780-6d17-4c08-afef-c7d158851c7b
 # ╠═e64d3142-f2b6-4f40-bd20-fc4da33a949c
 # ╠═474a93be-5892-4915-a5ee-9d238928b050
-# ╠═9f57c582-42c2-4027-ae82-7174b82b6612
-# ╠═c291d586-6908-4b91-b376-9d57d2d99485
 # ╠═35580a14-a258-4a92-9a8f-7c7ac454d8df
 # ╟─59fc6e5b-a00f-4afe-8afc-2d8f075c03da
 # ╠═f500ccb4-2b4e-4ddc-9a79-295469bf09cb
