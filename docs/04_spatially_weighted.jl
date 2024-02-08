@@ -74,8 +74,8 @@ html"""
                 C["Volume Fraction Calcium Mass"]
                 D["Integrated Calcium Mass"]
             end
-            class B unique1;
-            class C,D,E unique2;
+            class E unique1;
+            class B,C,D unique2;
     </div>
 </body>
 </html>
