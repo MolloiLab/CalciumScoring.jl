@@ -1,4 +1,3 @@
-using Revise
 using CalciumScoring
 using Unitful: mm, mg, ustrip, Quantity
 using ImageMorphology: label_components

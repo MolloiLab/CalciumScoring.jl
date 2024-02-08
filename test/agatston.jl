@@ -1,4 +1,3 @@
-using Revise
 using Test
 using CalciumScoring
 using Unitful: mm, mg
