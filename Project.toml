@@ -15,7 +15,7 @@ DSP = "0.7"
 Distributions = "0.25"
 ImageMorphology = "0.4"
 Unitful = "1.19"
-Statistics = "1.9, 1.10"
+Statistics = "1.10"
 julia = "1.9, 1.10"
 
 [extras]
