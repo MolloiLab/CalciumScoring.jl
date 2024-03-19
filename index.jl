@@ -1,9 +1,8 @@
 ### A Pluto.jl notebook ###
-# v0.19.37
+# v0.19.40
 
 #> [frontmatter]
-#> title = "CalciumScoring.jl"
-#> sidebar = "false"
+#> title = "Home"
 
 using Markdown
 using InteractiveUtils
@@ -63,7 +62,7 @@ html"""
 
 # ╔═╡ b4f6e7e3-bfbf-46ca-8ea4-4cc80fad07c3
 md"""
-!!! success "Overview"
+!!! success ""
 	This package contains four state-of-the-art coronary artery calcium (CAC) quantification methods.
 	- Agatston scoring [1, 2]
 	- Volume fraction calcium mass [3]
@@ -172,8 +171,8 @@ function index_title_card(title::String, subtitle::String, image_url::String; da
 	        ),
 			divv(:data_theme => "$data_theme", :class => "card card-bordered flex justify-center items-center border-$border_color text-center w-full dark:text-[#e6e6e6]",
 				divv(:class => "card-body flex flex-col justify-center items-center",
-					img(:src => "$image_url", :class => "h-24 w-24 md:h-52 md:w-52 rounded-md", :alt => "$title Logo"),
-					divv(:class => "text-5xl font-bold bg-gradient-to-r from-accent to-primary inline-block text-transparent bg-clip-text py-10", "$title"),
+					img(:src => "$image_url", :class => "h-24 w-24 md:h-40 md:w-40 rounded-md", :alt => "$title Logo"),
+					divv(:class => "text-3xl md:text-5xl font-bold bg-gradient-to-r from-accent to-primary inline-block text-transparent bg-clip-text py-10", "$title"),
 					p(:class => "card-text text-md font-serif", "$subtitle"
 					)
 				)
@@ -199,17 +198,17 @@ begin
 	end
 
 	function article_card(article::Article, color::String; data_theme = "pastel")
-	    a(:href => article.path, :class => "w-1/2 p-2",
+		a(:href => article.path, :class => "w-full md:w-1/2 p-2",
 			divv(:data_theme => "$data_theme", :class => "card card-bordered border-$color text-center dark:text-[#e6e6e6]",
-				divv(:class => "card-body justify-center items-center",
-					p(:class => "card-title", article.title),
-					p("Click to open the notebook")
+				divv(:class => "card-body justify-center items-center h-32 md:h-40",
+					p(:class => "text-lg md:text-2xl", article.title),
+					p(:class => "text-sm md:text-base", "Click to open the notebook")
 				),
 				figure(
-					img(:class =>"w-full", :src => article.image_url, :alt => article.title)
+					img(:class => "w-full h-40 md:h-48 object-cover", :src => article.image_url, :alt => article.title)
 				)
-	        )
-	    )
+			)
+		)
 	end
 
 	article_list_tutorials = Article[
