@@ -1,9 +1,5 @@
 module CalciumScoring
 
-using Statistics
-using Distributions
-using DSP
-
 include("agatston.jl")
 include("integrated.jl")
 include("spatially_weighted.jl")
