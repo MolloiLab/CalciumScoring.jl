@@ -1,4 +1,7 @@
 using CalciumScoring
+using Statistics: mean, std
+using Distributions: Normal, cdf
+using DSP: conv
 
 """
 ## `SpatiallyWeighted`
@@ -57,46 +60,46 @@ The function can be called with different parameters:
 """
 function score(vol::AbstractMatrix, calibration, alg::SpatiallyWeighted)
     μ, σ = mean(calibration), std(calibration)
-    d = Distributions.Normal(μ, σ)
+    d = Normal(μ, σ)
 
     scaled_array = zeros(size(vol))
     for i in axes(vol, 1)
         for j in axes(vol, 2)
-            scaled_array[i, j] = Distributions.cdf(d, vol[i, j])
+            scaled_array[i, j] = cdf(d, vol[i, j])
         end
     end
 
     kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-    weighted_arr = DSP.conv(scaled_array, kern)[2:end-1, 2:end-1]
+    weighted_arr = conv(scaled_array, kern)[2:end-1, 2:end-1]
     sw_score = sum(weighted_arr)
     return sw_score
 end
 
 function score(vol::AbstractMatrix, μ, σ, alg::SpatiallyWeighted)
-    d = Distributions.Normal(μ, σ)
+    d = Normal(μ, σ)
 
     scaled_array = zeros(size(vol))
     for i in axes(vol, 1)
         for j in axes(vol, 2)
-            scaled_array[i, j] = Distributions.cdf(d, vol[i, j])
+            scaled_array[i, j] = cdf(d, vol[i, j])
         end
     end
 
     kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-    weighted_arr = DSP.conv(scaled_array, kern)[2:end-1, 2:end-1]
+    weighted_arr = conv(scaled_array, kern)[2:end-1, 2:end-1]
     sw_score = sum(weighted_arr)
     return sw_score
 end
 
 function score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
     μ, σ = mean(calibration), std(calibration)
-    d = Distributions.Normal(μ, σ)
+    d = Normal(μ, σ)
 
     scaled_array = zeros(size(vol))
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             for z in axes(vol, 3)
-                scaled_array[i, j, z] = Distributions.cdf(d, vol[i, j, z])
+                scaled_array[i, j, z] = cdf(d, vol[i, j, z])
             end
         end
     end
@@ -104,20 +107,20 @@ function score(vol::AbstractArray, calibration, alg::SpatiallyWeighted)
     weighted_arr = zeros(size(vol))
     for z in axes(scaled_array, 3)
         kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-        weighted_arr[:, :, z] = DSP.conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
+        weighted_arr[:, :, z] = conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
     end
     sw_score = sum(weighted_arr)
     return sw_score
 end
 
 function score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
-    d = Distributions.Normal(μ, σ)
+    d = Normal(μ, σ)
 
     scaled_array = zeros(size(vol))
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             for z in axes(vol, 3)
-                scaled_array[i, j, z] = Distributions.cdf(d, vol[i, j, z])
+                scaled_array[i, j, z] = cdf(d, vol[i, j, z])
             end
         end
     end
@@ -125,7 +128,7 @@ function score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
     weighted_arr = zeros(size(vol))
     for z in axes(scaled_array, 3)
         kern = [0 0.2 0; 0.2 0.2 0.2; 0 0.2 0]
-        weighted_arr[:, :, z] = DSP.conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
+        weighted_arr[:, :, z] = conv(scaled_array[:, :, z], kern)[2:end-1, 2:end-1]
     end
     sw_score = sum(weighted_arr)
     return sw_score

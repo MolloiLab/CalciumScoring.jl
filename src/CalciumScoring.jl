@@ -1,8 +1,6 @@
 module CalciumScoring
-
-using Statistics
-using Distributions
-using DSP
+using DispatchDoctor: @stable
+@stable default_mode="disable" begin
 
 include("agatston.jl")
 include("integrated.jl")
@@ -22,4 +20,6 @@ export score,
     # volume_fraction.jl
     VolumeFraction
 
-end
+end #stable
+
+end  #module

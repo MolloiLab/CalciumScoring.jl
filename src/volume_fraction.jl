@@ -68,7 +68,7 @@ depending on the provided arguments.
 [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1101/2023.01.12.23284482)
 """
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-    number_calcium_voxels = []
+    number_calcium_voxels = Float64[]
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             m = vol[i, j]
@@ -80,7 +80,7 @@ function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFrac
 end
 
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-    number_calcium_voxels = []
+    number_calcium_voxels = Float64[]
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             m = vol[i, j]
@@ -92,7 +92,7 @@ function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg
 end
 
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
-    number_calcium_voxels = []
+    number_calcium_voxels = Float64[]
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             m = vol[i, j]
@@ -104,7 +104,7 @@ function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, den
 end
 
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-    number_calcium_voxels = []
+    number_calcium_voxels = Float64[]
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             for k in axes(vol, 3)
@@ -118,7 +118,7 @@ function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFract
 end
 
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-    number_calcium_voxels = []
+    number_calcium_voxels = Float64[]
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             for k in axes(vol, 3)
@@ -132,7 +132,7 @@ function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg:
 end
 
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
-    number_calcium_voxels = []
+    number_calcium_voxels = Float64[]
     for i in axes(vol, 1)
         for j in axes(vol, 2)
             for k in axes(vol, 3)

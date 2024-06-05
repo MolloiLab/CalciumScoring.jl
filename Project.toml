@@ -5,21 +5,21 @@ version = "0.4.0"
 
 [deps]
 DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
+DispatchDoctor = "8d63f2c5-f18a-4cf2-ba9d-b3f60fc568c8"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 ImageMorphology = "787d08f9-d448-5407-9aad-5290dd7ab264"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [compat]
 DSP = "0.7"
 Distributions = "0.25"
 ImageMorphology = "0.4"
-Unitful = "1.19"
 Statistics = "1.10"
 julia = "1.10"
 
 [extras]
+Preferences = "21216c6a-2e73-6563-6e65-726566657250"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test"]
+test = ["Preferences", "Test"]

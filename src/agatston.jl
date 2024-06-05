@@ -1,6 +1,6 @@
 using CalciumScoring
-using Unitful: mm, mg, ustrip, Quantity
 using ImageMorphology: label_components
+using Statistics: mean
 
 """
 ## `CalciumScore`
@@ -45,7 +45,7 @@ The function returns the weight threshold as an integer value between 0 and 4.
 ## Reference
 - [Gräni, Christoph et al. “Ultra-Low-Dose Coronary Artery Calcium Scoring Using Novel Scoring Thresholds for Low Tube Voltage Protocols—a Pilot Study.” European heart journal cardiovascular imaging 19.12 (2018): 1362–1371. Web.](https://doi.org/10.1093/ehjci/jey019)
 """
-function _weight_thresholds(kV, max_intensity)
+@stable function _weight_thresholds(kV, max_intensity)
     @assert (kV == 70 || kV == 80 || kV == 100 || kV == 120 || kV == 135) "kV is $(kV), which is not one of the accepted values \n kV can be either 70, 80, 100, 120 or 135"
 
     local weight
@@ -130,12 +130,7 @@ struct Agatston <: CalciumScore end
 
 ```julia
 score(vol, spacing, alg::Agatston; kV=120, min_size_mm=1)
-
-score(vol, spacing::Array{T}, alg::Agatston; kV=120, min_size_mm=1)
-
 score(vol, spacing, mass_cal_factor, alg::Agatston; kV=120, min_size_mm=1)
-
-score(vol, spacing::Array{T}, mass_cal_factor::Unitful.Quantity, alg::Agatston; kV=120, min_size_mm=1)
 ```
 Calculate the calcium score via the traditional Agatston scoring technique, as outlined in the 
 [original paper](10.1016/0735-1097(90)90282-T). Energy (`kV`) specific `threshold`s are determined based on 
@@ -144,16 +139,16 @@ calcium mass score via the `mass_cal_factor` if provided.
 
 #### Inputs
 - `vol`: input volume containing just the region of interest
-- `spacing`: known pixel/voxel spacing (can be an array of `Unitful.Quantity`)
+- `spacing`: known pixel/voxel spacing
 - `alg::Agatston`: Agatston scoring algorithm `Agatston()`
-- `mass_cal_factor`: (optional) a factor to calibrate the calculated mass (can be a `Unitful.Quantity`)
+- `mass_cal_factor`: (optional) a factor to calibrate the calculated mass
 - kwargs:
   - `kV=120`: energy of the input CT scan image
   - `min_size=1`: minimum connected component size (see [`label_components`](https://github.com/JuliaImages/Images.jl))
 
 #### Returns
 - `agatston_score`: total Agatston score
-- `volume_score`: total calcium volume via Agatston scoring (can be a `Unitful.Quantity`)
+- `volume_score`: total calcium volume via Agatston scoring
 - `abs_mass_score`: (optional) total calcium mass after calibration, returned only when `mass_cal_factor` is provided
 
 #### References
@@ -161,161 +156,82 @@ calcium mass score via the `mass_cal_factor` if provided.
 
 [Ultra-low-dose coronary artery calcium scoring using novel scoring thresholds for low tube voltage protocols—a pilot study ](https://doi.org/10.1093/ehjci/jey019)
 """
-function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
-    if !(kV in [70, 80, 100, 120, 135])
-        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
-    end
-    spacing = ustrip.(spacing)
-    threshold = round(378 * exp(-0.009 * kV))
-    area = spacing[1] * spacing[2]
-    min_size_pixels = div(round(min_size / area), 1)
-    comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
-    agatston_score = 0
-    volume_score = 0
-    for z in axes(vol, 3)
-        slice = vol[:, :, z]
-        thresholded_slice = slice .> threshold
-        max_intensity = maximum(slice)
-        if max_intensity < threshold
-            continue
-        end
-        lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
-        for label_idx in eachindex(unique(lesion_map))
-            idxs = findall(x -> x == label_idx, lesion_map)
-            num_label_idxs = length(idxs)
-            if num_label_idxs < min_size_pixels
-                continue
-            end
-            intensities = slice[idxs]
-            max_intensity = maximum(intensities)
-            weight = _weight_thresholds(kV, max_intensity)
-            slice_score = num_label_idxs * area * min(weight, 4)
-            agatston_score += slice_score
-            volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3]
-        end
-    end
-    return agatston_score, volume_score
+@stable function score(vol, spacing, alg::Agatston; kV=120, min_size=1)
+	if !(kV in [70, 80, 100, 120, 135])
+		error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
+	end
+	threshold = round(378 * exp(-0.009 * kV))
+	area = spacing[1] * spacing[2]
+	min_size_pixels = div(round(min_size / area), 1)
+	comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
+	agatston_score = 0.0
+	volume_score = 0.0
+	for z in axes(vol, 3)
+		slice = vol[:, :, z]
+		thresholded_slice = slice .> threshold
+		max_intensity = maximum(slice)
+		if max_intensity < threshold
+			continue
+		end
+		lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
+		for label_idx in eachindex(unique(lesion_map))
+			idxs = findall(x -> x == label_idx, lesion_map)
+			num_label_idxs = length(idxs)
+			if num_label_idxs < min_size_pixels
+				continue
+			end
+			intensities = slice[idxs]
+			max_intensity = maximum(intensities)
+			weight = _weight_thresholds(kV, max_intensity)
+			slice_score = num_label_idxs * area * min(weight, 4)
+			agatston_score += slice_score
+			volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3]
+		end
+	end
+	return agatston_score, volume_score
 end
 
-function score(vol, spacing::Array{T}, alg::Agatston; kV=120, min_size=1) where {T<:Quantity}
-    if !(kV in [70, 80, 100, 120, 135])
-        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
-    end
-    spacing = ustrip(spacing)
-    threshold = round(378 * exp(-0.009 * kV))
-    area = spacing[1] * spacing[2]
-    min_size_pixels = div(round(min_size / area), 1)
-    comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
-    agatston_score = 0
-    volume_score = 0mm^3
-    for z in axes(vol, 3)
-        slice = vol[:, :, z]
-        thresholded_slice = slice .> threshold
-        max_intensity = maximum(slice)
-        if max_intensity < threshold
-            continue
-        end
-        lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
-        for label_idx in eachindex(unique(lesion_map))
-            idxs = findall(x -> x == label_idx, lesion_map)
-            num_label_idxs = length(idxs)
-            if num_label_idxs < min_size_pixels
-                continue
-            end
-            intensities = slice[idxs]
-            max_intensity = maximum(intensities)
-            weight = _weight_thresholds(kV, max_intensity)
-            slice_score = num_label_idxs * area * min(weight, 4)
-            agatston_score += slice_score
-            volume_score += num_label_idxs * spacing[1]mm * spacing[2]mm * spacing[3]mm
-        end
-    end
-    return agatston_score, volume_score
-end
-
-
-function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
-    if !(kV in [70, 80, 100, 120, 135])
-        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
-    end    
-    spacing = ustrip.(spacing)
-    threshold = round(378 * exp(-0.009 * kV))
-    area = spacing[1] * spacing[2]
-    min_size_pixels = div(round(min_size / area), 1)
-    comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
-    agatston_score = 0
-    volume_score = 0
-    attenuations = Float64[]
-    for z in axes(vol, 3)
-        slice = vol[:, :, z]
-        thresholded_slice = slice .> threshold
-        max_intensity = maximum(slice)
-        if max_intensity < threshold
-            continue
-        end
-        lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
-        for label_idx in eachindex(unique(lesion_map))
-            idxs = findall(x -> x == label_idx, lesion_map)
-            num_label_idxs = length(idxs)
-            if num_label_idxs < min_size_pixels
-                continue
-            end
-            intensities = slice[idxs]
-            max_intensity = maximum(intensities)
-            weight = _weight_thresholds(kV, max_intensity)
-            slice_score = num_label_idxs * area * min(weight, 4)
-            agatston_score += slice_score
-            volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3]
-            push!(attenuations, intensities...)
-        end
-    end
-    _rel_mass_score = isempty(attenuations) ? 0.0 : mean(attenuations)
-    rel_mass_score = _rel_mass_score * volume_score
-    abs_mass_score = rel_mass_score * mass_calibration_factor
-        
-    return agatston_score, volume_score, abs_mass_score
-end
-
-function score(vol, spacing::Array{T}, mass_calibration_factor::Quantity, alg::Agatston; kV=120, min_size=1) where {T<:Quantity}
-    if !(kV in [70, 80, 100, 120, 135])
-        error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
-    end
-    spacing = ustrip(spacing)
-    threshold = round(378 * exp(-0.009 * kV))
-    area = spacing[1] * spacing[2]
-    min_size_pixels = div(round(min_size / area), 1)
-    comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
-    agatston_score = 0
-    volume_score = 0mm^3
-    attenuations = []
-    for z in axes(vol, 3)
-        slice = vol[:, :, z]
-        thresholded_slice = slice .> threshold
-        max_intensity = maximum(slice)
-        if max_intensity < threshold
-            continue
-        end
-        lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
-        for label_idx in eachindex(unique(lesion_map))
-            idxs = findall(x -> x == label_idx, lesion_map)
-            num_label_idxs = length(idxs)
-            if num_label_idxs < min_size_pixels
-                continue
-            end
-            intensities = slice[idxs]
-            max_intensity = maximum(intensities)
-            weight = _weight_thresholds(kV, max_intensity)
-            slice_score = num_label_idxs * area * min(weight, 4)
-            agatston_score += slice_score
-            volume_score += num_label_idxs * spacing[1]mm * spacing[2]mm * spacing[3]mm
-            push!(attenuations, intensities...)
-        end
-    end
-
-    local rel_mass_score = 0.0
-    if length(attenuations) != 0
-        rel_mass_score = mean(attenuations) * volume_score
-    end
-    abs_mass_score = rel_mass_score * mass_calibration_factor
-    return agatston_score, volume_score, abs_mass_score
+@stable function score(vol, spacing, mass_calibration_factor, alg::Agatston; kV=120, min_size=1)
+	if !(kV in [70, 80, 100, 120, 135])
+		error("kV is $(kV), which is not one of the accepted values. kV can be 70, 80, 100, 120, or 135.")
+	end
+	threshold = round(378 * exp(-0.009 * kV))
+	area = spacing[1] * spacing[2]
+	min_size_pixels = div(round(min_size / area), 1)
+	comp_connect = Int(min(3, max(1, div(round(2 * div(min_size_pixels, 2) + 1), 1))))
+	agatston_score = 0.0
+	volume_score = 0.0
+	attenuations = Float64[]
+	for z in axes(vol, 3)
+		slice = vol[:, :, z]
+		thresholded_slice = slice .> threshold
+		max_intensity = maximum(slice)
+		if max_intensity < threshold
+			continue
+		end
+		lesion_map = label_components(thresholded_slice, trues(comp_connect, comp_connect))
+		for label_idx in eachindex(unique(lesion_map))
+			idxs = findall(x -> x == label_idx, lesion_map)
+			num_label_idxs = length(idxs)
+			if num_label_idxs < min_size_pixels
+				continue
+			end
+			intensities = slice[idxs]
+			max_intensity = maximum(intensities)
+			weight = _weight_thresholds(kV, max_intensity)
+			slice_score = num_label_idxs * area * min(weight, 4)
+			agatston_score += slice_score
+			volume_score += num_label_idxs * spacing[1] * spacing[2] * spacing[3]
+			push!(attenuations, intensities...)
+		end
+	end
+	
+	_rel_mass_score = 0.0
+	if !isempty(attenuations)
+		_rel_mass_score = mean(attenuations)
+	end
+	rel_mass_score = _rel_mass_score * volume_score
+	abs_mass_score = rel_mass_score * mass_calibration_factor
+		
+	return agatston_score, volume_score, abs_mass_score
 end
