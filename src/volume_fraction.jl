@@ -25,7 +25,7 @@ the Hounsfield unit associated with a known calcium density `hu_calcium`, and th
 unit associated with background heart tissue `hu_heart_tissue`
 """
 function _percentage_calcium(voxel_intensity, hu_calcium, hu_heart_tissue)
-    return precentage_calcium = (voxel_intensity - hu_heart_tissue) / (hu_calcium - hu_heart_tissue)
+    return (voxel_intensity - hu_heart_tissue) / (hu_calcium - hu_heart_tissue)
 end
 
 """
@@ -68,79 +68,67 @@ depending on the provided arguments.
 [Coronary artery calcium mass measurement based on integrated intensity and volume fraction techniques](https://doi.org/10.1101/2023.01.12.23284482)
 """
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-    number_calcium_voxels = Float64[]
+    calcium_score = 0.0
     for i in axes(vol, 1)
-        for j in axes(vol, 2)
-            m = vol[i, j]
-            percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-            push!(number_calcium_voxels, percent)
+		for j in axes(vol, 2)
+			calcium_score += _percentage_calcium(vol[i, j], hu_calcium, hu_heart_tissue)
         end
     end
-    return sum(number_calcium_voxels)
+    return calcium_score
 end
 
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-    number_calcium_voxels = Float64[]
+    calcium_score = 0.0
     for i in axes(vol, 1)
-        for j in axes(vol, 2)
-            m = vol[i, j]
-            percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-            push!(number_calcium_voxels, percent)
+		for j in axes(vol, 2)
+			calcium_score += _percentage_calcium(vol[i, j], hu_calcium, hu_heart_tissue)
         end
     end
-    return sum(number_calcium_voxels) * voxel_size
+    return calcium_score * voxel_size
 end
 
 function score(vol::AbstractMatrix, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
-    number_calcium_voxels = Float64[]
+    calcium_score = 0.0
     for i in axes(vol, 1)
-        for j in axes(vol, 2)
-            m = vol[i, j]
-            percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-            push!(number_calcium_voxels, percent)
+		for j in axes(vol, 2)
+			calcium_score += _percentage_calcium(vol[i, j], hu_calcium, hu_heart_tissue)
         end
     end
-    return sum(number_calcium_voxels) * voxel_size * density_calcium
+    return calcium_score * voxel_size * density_calcium
 end
 
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, alg::VolumeFraction)
-    number_calcium_voxels = Float64[]
+    calcium_score = 0.0
     for i in axes(vol, 1)
-        for j in axes(vol, 2)
-            for k in axes(vol, 3)
-                m = vol[i, j, k]
-                percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-                push!(number_calcium_voxels, percent)
+		for j in axes(vol, 2)
+			for k in axes(vol, 3)
+				calcium_score += _percentage_calcium(vol[i, j, k], hu_calcium, hu_heart_tissue)
             end
         end
     end
-    return sum(number_calcium_voxels)
+    return calcium_score
 end
 
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, alg::VolumeFraction)
-    number_calcium_voxels = Float64[]
+    calcium_score = 0.0
     for i in axes(vol, 1)
-        for j in axes(vol, 2)
-            for k in axes(vol, 3)
-                m = vol[i, j, k]
-                percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-                push!(number_calcium_voxels, percent)
+		for j in axes(vol, 2)
+			for k in axes(vol, 3)
+				calcium_score += _percentage_calcium(vol[i, j, k], hu_calcium, hu_heart_tissue)
             end
         end
     end
-    return sum(number_calcium_voxels) * voxel_size
+    return calcium_score * voxel_size
 end
 
 function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, density_calcium, alg::VolumeFraction)
-    number_calcium_voxels = Float64[]
+    calcium_score = 0.0
     for i in axes(vol, 1)
-        for j in axes(vol, 2)
-            for k in axes(vol, 3)
-                m = vol[i, j, k]
-                percent = _percentage_calcium(m, hu_calcium, hu_heart_tissue)
-                push!(number_calcium_voxels, percent)
+		for j in axes(vol, 2)
+			for k in axes(vol, 3)
+				calcium_score += _percentage_calcium(vol[i, j, k], hu_calcium, hu_heart_tissue)
             end
         end
     end
-    return sum(number_calcium_voxels) * voxel_size * density_calcium
+    return calcium_score * voxel_size * density_calcium
 end
