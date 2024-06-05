@@ -1,7 +1,4 @@
 using CalciumScoring
-using DispatchDoctor: @stable
-
-@stable default_mode="disable" begin
 
 """
 ## `VolumeFraction`
@@ -147,5 +144,3 @@ function score(vol::AbstractArray, hu_calcium, hu_heart_tissue, voxel_size, dens
     end
     return sum(number_calcium_voxels) * voxel_size * density_calcium
 end
-
-end # stable

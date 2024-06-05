@@ -1,9 +1,6 @@
 using CalciumScoring
 using ImageMorphology: label_components
 using Statistics: mean
-using DispatchDoctor: @stable
-
-@stable default_mode="disable" begin
 
 """
 ## `CalciumScore`
@@ -237,6 +234,4 @@ end
 	abs_mass_score = rel_mass_score * mass_calibration_factor
 		
 	return agatston_score, volume_score, abs_mass_score
-end
-
 end

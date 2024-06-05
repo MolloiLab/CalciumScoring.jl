@@ -1,7 +1,4 @@
 using CalciumScoring
-using DispatchDoctor: @stable
-
-@stable default_mode="disable" begin
 
 """
 ## `Integrated`
@@ -96,5 +93,3 @@ function score(S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
     Mass_Obj = Vol_Obj * ρ
     return Mass_Obj
 end
-
-end # stable

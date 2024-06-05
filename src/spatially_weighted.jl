@@ -2,9 +2,6 @@ using CalciumScoring
 using Statistics: mean, std
 using Distributions: Normal, cdf
 using DSP: conv
-using DispatchDoctor: @stable
-
-@stable default_mode="disable" begin
 
 """
 ## `SpatiallyWeighted`
@@ -136,5 +133,3 @@ function score(vol::AbstractArray, μ, σ, alg::SpatiallyWeighted)
     sw_score = sum(weighted_arr)
     return sw_score
 end
-
-end #stable
