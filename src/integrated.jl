@@ -1,6 +1,8 @@
 using CalciumScoring
 using DispatchDoctor: @stable
 
+@stable default_mode="disable" begin
+
 """
 ## `Integrated`
 
@@ -28,7 +30,7 @@ struct Integrated{T1<:AbstractArray,T2<:AbstractFloat} <: CalciumScoring.Calcium
     N::T2
 end
 
-@stable function Integrated(
+function Integrated(
     vol::AbstractArray,
     I::AbstractFloat=Float64.(sum(vol)),
     N::AbstractFloat=Float64.(length(vol)),
@@ -68,7 +70,7 @@ The function can be called with different parameters:
 
 [Accurate quantification of vessel cross-sectional area using CT angiography: a simulation study](https://doi.org/10.1007/s10554-016-1007-9)
 """
-@stable function score(S_Bkg, S_Obj, algorithm::Integrated)
+function score(S_Bkg, S_Obj, algorithm::Integrated)
     I = algorithm.I
     N = algorithm.N
 
@@ -76,7 +78,7 @@ The function can be called with different parameters:
     return N_Obj
 end
 
-@stable function score(S_Bkg, S_Obj, size, algorithm::Integrated)
+function score(S_Bkg, S_Obj, size, algorithm::Integrated)
     I = algorithm.I
     N = algorithm.N
 
@@ -85,7 +87,7 @@ end
     return Vol_Obj
 end
 
-@stable function score(S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
+function score(S_Bkg, S_Obj, size, ρ, algorithm::Integrated)
     I = algorithm.I
     N = algorithm.N
 
@@ -94,3 +96,5 @@ end
     Mass_Obj = Vol_Obj * ρ
     return Mass_Obj
 end
+
+end # stable
